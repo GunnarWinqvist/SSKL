@@ -214,7 +214,7 @@ HTMLCode;
 SELECT idPerson, ePostPerson FROM 
     (({$tablePerson} JOIN {$tableFunktionar} ON idPerson = funktionar_idPerson)
     JOIN {$tableBostad} ON person_idBostad = idBostad)
-    ORDER BY efternamnPerson;
+    ORDER BY ePostPerson;
 Query;
         $result = $dbAccess->SingleQuery($query); 
         $mainTextHTML = <<<HTMLCode
@@ -230,13 +230,13 @@ HTMLCode;
         $mainTextHTML .= "</table> \n";
     break;
     
-    case '8': //Sändlista för elever.
+    case '8': //Sändlista för elever per grupp.
         $query = <<<Query
 SELECT idElev, ePostMalsman, gruppElev FROM 
     (({$tablePerson} JOIN {$tableElev} ON idPerson = elev_idPerson)
     JOIN {$viewMalsman} ON idPerson = idElev)
     WHERE ePostMalsman LIKE '%@%'
-    ORDER BY gruppElev;
+    ORDER BY gruppElev, ePostMalsman;
 Query;
         $result = $dbAccess->SingleQuery($query); 
         $mainTextHTML = <<<HTMLCode
@@ -244,21 +244,46 @@ Query;
 <b>Sändlista elever</b>
 HTMLCode;
         $lastGroup = "";
+        $lastEpost = "";
         while($row = $result->fetch_row()) {
             if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
             if ($row[2] != $lastGroup) $mainTextHTML .= "<tr style='font-size:12pt;'><td><b>{$row[2]}</b></td></tr> \n";
-            $mainTextHTML .= "<tr style='font-size:10pt;'><td>{$row[1]}</td></tr> \n";
+            if ($row[1] != $lastEpost) $mainTextHTML .= "<tr style='font-size:10pt;'><td>{$row[1]}</td></tr> \n";
+            $lastEpost = $row[1];
             $lastGroup = $row[2];
         }
         $mainTextHTML .= "</table> <p>Markera de du vill skicka till och kopiera med ctrl+c. 
                             Lägg sedan in dem i adressfältet på ditt mejl med ctrl+v. </p> \n";
     break;
     
-    case '9': //Sändlista för samtliga medlemmar.
+    case '9': //Sändlista för samtliga elever.
+        $query = <<<Query
+SELECT idElev, ePostMalsman FROM 
+    (({$tablePerson} JOIN {$tableElev} ON idPerson = elev_idPerson)
+    JOIN {$viewMalsman} ON idPerson = idElev)
+    WHERE ePostMalsman LIKE '%@%'
+    ORDER BY ePostMalsman;
+Query;
+        $result = $dbAccess->SingleQuery($query); 
+        $mainTextHTML = <<<HTMLCode
+<table>
+<b>Sändlista elever</b>
+HTMLCode;
+        $lastEpost = "";
+        while($row = $result->fetch_row()) {
+            if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
+            if ($row[1] != $lastEpost) $mainTextHTML .= "<tr style='font-size:10pt;'><td>{$row[1]}</td></tr> \n";
+            $lastEpost = $row[1];
+        }
+        $mainTextHTML .= "</table> <p>Markera de du vill skicka till och kopiera med ctrl+c. 
+                            Lägg sedan in dem i adressfältet på ditt mejl med ctrl+v. </p> \n";
+    break;
+    
+    case '10': //Sändlista för samtliga medlemmar.
         $query = <<<Query
 SELECT idPerson, ePostPerson FROM {$tablePerson}
     WHERE ePostPerson LIKE '%@%'
-    ORDER BY efternamnPerson;
+    ORDER BY ePostPerson;
 Query;
         $result = $dbAccess->SingleQuery($query); 
         $mainTextHTML = <<<HTMLCode
@@ -272,7 +297,7 @@ HTMLCode;
         $mainTextHTML .= "</table> \n";
     break;
 
-    case '10': //Senast betalt.
+    case '11': //Senast betalt.
         $query = <<<Query
 SELECT idPerson, gruppElev, fornamnPerson, efternamnPerson, betaltElev, telefonBostad, 
         fornamnMalsman, efternamnMalsman, mobilMalsman, ePostMalsman  FROM 
@@ -304,7 +329,7 @@ HTMLCode;
         $mainTextHTML .= "</table> \n";
     break;
     
-    case '11': //Lista till skolverket.
+    case '12': //Lista till skolverket.
         $query = <<<Query
 SELECT fornamnPerson, efternamnPerson, gruppElev, fornamnMalsman, efternamnMalsman, ePostMalsman, mobilMalsman,
         telefonBostad, adressBostad, stadsdelBostad FROM 
