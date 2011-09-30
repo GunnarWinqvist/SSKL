@@ -34,7 +34,7 @@ $delimiter          = "¤";
 $substitution       = "*";
 
 // Öppna filen och lägg till rubrikraden.
-$dumpFileName = TP_DOCUMENTSPATH . "DB_dump.txt";
+$dumpFileName = TP_ROOTPATH . "DB_dump.txt";
 $fh = fopen($dumpFileName, "w");
 
 $querys = array( 
@@ -65,7 +65,7 @@ foreach ($querys as $set) {
 
 fclose($fh);
 
-$documents = WS_SITELINK . "documents/DB_dump.txt";
+$documents = WS_SITELINK . "DB_dump.txt";
 $mainTextHTML = <<<HTMLCode
 <p>Gjorde en lyckad dump av databasen till filen: {$dumpFileName}.
 <p>Vill du ladda ner filen?</p>

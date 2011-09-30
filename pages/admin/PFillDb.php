@@ -35,7 +35,7 @@ $tableBlogg         = DB_PREFIX . 'Blogg';
 $delimiter          = "¤";
 
 // Öppna filen. 
-$dumpFileName = TP_DOCUMENTSPATH . "DB_dump.txt";
+$dumpFileName = TP_ROOTPATH . "DB_dump.txt";
 $fh = fopen($dumpFileName, "rt");
 if ($debugEnable) $debug .= "dumpFileName = ".$dumpFileName." fh=".$fh."<br /> \n";
 $mainTextHTML = "<p>Databasen har från filen ".$dumpFileName." fyllts med följande information:<p><br /> \n";

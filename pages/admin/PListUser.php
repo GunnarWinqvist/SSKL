@@ -64,7 +64,7 @@ $mainTextHTML = <<<HTMLCode
 </tr>
 HTMLCode;
 
-if ($result->num_rows) {
+if ($result) {
     while($row = $result->fetch_row()) {
         if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
         $mainTextHTML .= <<<HTMLCode
@@ -83,6 +83,8 @@ if ($result->num_rows) {
 
 HTMLCode;
     }
+    $result->close();
+    
 } else {
     $mainTextHTML .= <<<HTMLCode
 <tr>
@@ -97,7 +99,6 @@ $mainTextHTML .= <<<HTMLCode
 </div>
 HTMLCode;
 
-$result->close();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //

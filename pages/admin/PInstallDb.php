@@ -41,7 +41,7 @@ $tableRelation          = DB_PREFIX . 'Relation';
 $tableBlogg             = DB_PREFIX . 'Blogg';
 $viewMalsman            = DB_PREFIX . 'ListaMalsman';
 
-$totalStatements = 17; //Måste uppdateras manuellt om antalet statements ändras.
+$totalStatements = 16; //Måste uppdateras manuellt om antalet statements ändras.
 $query = <<<QUERY
 
 -- Tag bort tabellerna om de redan finns.
