@@ -41,7 +41,7 @@ $mainTextHTML = <<<HTMLCode
 <input type='radio' name='lista' value='9'  /> Sändlista för samtliga elever. <br />
 <input type='radio' name='lista' value='10'  /> Sändlista för samtliga medlemmar. <br />
 <input type='radio' name='lista' value='11'  /> Senast betalt terminsavgiften. <br />
-<input type='radio' name='lista' value='12'  /> Lista till skolverket. (Inte färdig än.)<br />
+<input type='radio' name='lista' value='12'  /> Lista till skolverket.<br />
 <br />
 <input type='image' title='Skapa lista' src='../images/b_enter.gif' alt='Skapa lista' />
 </form>
