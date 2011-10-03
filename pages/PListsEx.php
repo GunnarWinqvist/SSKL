@@ -86,7 +86,7 @@ HTMLCode;
     
     case '3': //Elever Kontaktuppgifter och personnummer.
         $query = <<<Query
-SELECT idPerson, gruppElev, fornamnPerson, efternamnPerson, arskursElev, personnummerElev, telefonBostad, 
+SELECT idPerson, gruppElev, fornamnPerson, efternamnPerson, arskursElev, skolaElev, personnummerElev, telefonBostad, 
         fornamnMalsman, efternamnMalsman, mobilMalsman, ePostMalsman  FROM 
     ((({$tablePerson} JOIN {$tableElev} ON idPerson = elev_idPerson)
     JOIN {$tableBostad} ON person_idBostad = idBostad)
@@ -96,7 +96,7 @@ Query;
         $result = $dbAccess->SingleQuery($query); 
         $mainTextHTML = <<<HTMLCode
 <table>
-<tr><th>Grupp</th><th>Elev</th><th></th><th>ÅK</th><th>Personnummer</th><th>Hemtelefon</th><th>Målsman</th><th></th>
+<tr><th>Grupp</th><th>Elev</th><th></th><th>ÅK</th><th>Skola</th><th>Personnummer</th><th>Hemtelefon</th><th>Målsman</th><th></th>
         <th>Mobil</th><th>e-postadress</th></tr>
 HTMLCode;
         $lastId = 0;
@@ -106,9 +106,9 @@ HTMLCode;
             $mainTextHTML .= "<tr style='font-size:10pt;'>";
             if ($row[1] == $lastGroup) $mainTextHTML .= "<td></td>";
             else $mainTextHTML .= "<td>{$row[1]}</td>";
-            if ($row[0] == $lastId) $mainTextHTML .= "<td></td><td></td><td></td><td></td><td></td>";
-            else $mainTextHTML .= "<td>{$row[2]}</td><td>{$row[3]}</td><td>{$row[4]}</td><td>{$row[5]}</td><td>{$row[6]}</td>";
-            $mainTextHTML .= "<td>{$row[7]}</td><td>{$row[8]}</td><td>{$row[9]}</td><td>{$row[10]}</td>";
+            if ($row[0] == $lastId) $mainTextHTML .= "<td></td><td></td><td></td><td></td><td></td><td></td>";
+            else $mainTextHTML .= "<td>{$row[2]}</td><td>{$row[3]}</td><td>{$row[4]}</td><td>{$row[5]}</td><td>{$row[6]}</td><td>{$row[7]}</td>";
+            $mainTextHTML .= "<td>{$row[8]}</td><td>{$row[9]}</td><td>{$row[10]}</td><td>{$row[11]}</td>";
             $mainTextHTML .= "</tr> \n";
             $lastId = $row[0];
             $lastGroup = $row[1];

@@ -109,7 +109,8 @@ if ($arrayElev[0]) {
 <tr><td>Grupp</td><td>{$arrayElev[2]}</td></tr>
 <tr><td>Nationalitet</td><td>{$arrayElev[3]}</td></tr>
 <tr><td>Årskurs</td><td>{$arrayElev[4]}</td></tr>
-<tr><td>Senast betalt</td><td>{$arrayElev[5]}</td></tr>
+<tr><td>Ordinarie skola</td><td>{$arrayElev[5]}</td></tr>
+<tr><td>Senast betalt</td><td>{$arrayElev[6]}</td></tr>
 HTMLCode;
 
     //Kolla vem/vilka som är målsman för eleven.

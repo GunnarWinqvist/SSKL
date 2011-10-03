@@ -9,7 +9,7 @@
 // Input: 'id'
 // Output: 'fornamn', 'efternamn', 'epost', 'mobil', 'idBostad', 'kopplabostad', 'editbostad', 'telefon', 
 // 'adress', 'stadsdel', 'postnummer', 'stat', 'funk', 'funktion', 'malsman', 'natmalsman', 'pnmalsman', 
-// 'elev', 'personnummer', 'grupp', 'nat', 'relation', 'id', som POST.
+// 'elev', 'personnummer', 'grupp', 'nat', 'grade', 'skola', 'pay', 'relation', 'id', som POST.
 // 
 
 
@@ -209,7 +209,7 @@ $mainTextHTML .= <<<HTMLCode
 <table class='formated'>
 <tr><td>Personnummer</td>
 <td><input type='text' name='personnummer' size='40' maxlength='13' value='{$arrayElev[1]}' /></td>
-<td class='td3'><input type='checkbox' name='elev' value='true' />Lägg till / Ändra</td></tr>
+<td class='td3'><input type='checkbox' name='elev' value='true' />Lägg till / Ändra (Gäller alla elevfält.)</td></tr>
 <tr><td></td><td><i><small>(ååååmmdd-nnnn) (Om eleven saknar svenskt</small></i></td></tr>
 <tr><td></td><td><i><small>personnummer fyll i födelsedatum samt 0010 om</small></i></td></tr>
 <tr><td></td><td><i><small>det är en pojke eller 0020 om det är en flicka.)</small></i></td></tr>
@@ -221,16 +221,19 @@ $mainTextHTML .= <<<HTMLCode
 <tr><td>Årskurs</td>
 <td><input type='text' name='grade' size='40' maxlength='2' value='{$arrayElev[4]}' /></td></tr>
 <tr><td></td><td><i><small>(Årskurs i sin ordinarie skola.)</small></i></td></tr>
+<tr><td>Ordinarie skola</td>
+<td><input type='text' name='skola' size='40' maxlength='50' value='{$arrayElev[5]}' /></td></tr>
+
 HTMLCode;
 
 if (strcmp("fnk", $_SESSION['authorityUser']) > 0 ) {
     $mainTextHTML .= <<<HTMLCode
 <tr><td>Senast betalt</td>
-<td><input type='text' name='pay' size='40' maxlength='10' value='{$arrayElev[5]}' /></td></tr>
+<td><input type='text' name='pay' size='40' maxlength='10' value='{$arrayElev[6]}' /></td></tr>
 HTMLCode;
 } else {
     $mainTextHTML .= <<<HTMLCode
-<input type='hidden' name='pay' value='{$arrayElev[5]}' />
+<input type='hidden' name='pay' value='{$arrayElev[6]}' />
 HTMLCode;
 }
     

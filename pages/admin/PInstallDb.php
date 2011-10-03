@@ -77,7 +77,7 @@ CREATE TABLE {$tablePerson} (
   mobilPerson CHAR(20),
   person_idBostad INT,
   FOREIGN KEY (person_idBostad) REFERENCES {$tableBostad}(idBostad),
-  senastInloggad INT
+  senastInloggadPerson INT DEFAULT '0'
 );
 
 -- Tabell för funktionär.
@@ -104,7 +104,7 @@ CREATE TABLE {$tableElev} (
   gruppElev CHAR(10),
   nationalitetElev CHAR(2),
   arskursElev CHAR(2),
-  ordinarieSkola CHAR(50),
+  skolaElev CHAR(50),
   betaltElev CHAR(10)
 
 );
@@ -134,7 +134,7 @@ CREATE TABLE {$tableBlogg} (
     FOREIGN KEY (post_idPerson) REFERENCES {$tablePerson}(idPerson),
     titelPost           CHAR(100),
     textPost            TEXT,
-    tidPost             INT,
+    tidPost             INT DEFAULT '0',
     internPost          BOOLEAN
 );
 

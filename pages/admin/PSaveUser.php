@@ -7,7 +7,7 @@
 // Sidan sparar grunddata för en användare och skickar vidare till PEditUser2.
 // Input: 'fornamn', 'efternamn', 'epost', 'mobil', 'idBostad', 'kopplabostad', 'editbostad', 'telefon', 
 // 'adress', 'stadsdel', 'postnummer', 'stat', 'funk', 'funktion', 'malsman', 'natmalsman', 'pnmalsman', 
-// 'elev', 'personnummer', 'grupp', 'nat', 'relation', 'id', som POST.
+// 'elev', 'personnummer', 'grupp', 'nat', 'grade', 'skola', 'pay', 'relation', 'id', som POST.
 // Output:  
 // 
 
@@ -213,11 +213,13 @@ if ($elev) {
     $gruppElev        = isset($_POST['grupp'])        ? $_POST['grupp']        : NULL;
     $nationalitetElev = isset($_POST['nat'])          ? $_POST['nat']          : NULL;
     $arskursElev      = isset($_POST['grade'])        ? $_POST['grade']        : NULL;
+    $skolaElev        = isset($_POST['skola'])        ? $_POST['skola']        : NULL;
     $betaltElev       = isset($_POST['pay'])          ? $_POST['pay']          : NULL;
     $personnummerElev = $dbAccess->WashParameter(strip_tags($personnummerElev));
     $gruppElev        = $dbAccess->WashParameter(strip_tags($gruppElev));
     $nationalitetElev = $dbAccess->WashParameter(strip_tags($nationalitetElev));
     $arskursElev      = $dbAccess->WashParameter(strip_tags($arskursElev));
+    $skolaElev        = $dbAccess->WashParameter(strip_tags($skolaElev));
     $betaltElev       = $dbAccess->WashParameter(strip_tags($betaltElev));
 
     // Kolla om personen redan finns som elev.
@@ -229,14 +231,15 @@ UPDATE {$tableElev} SET
     gruppElev = '{$gruppElev}',
     nationalitetElev = '{$nationalitetElev}',
     arskursElev = '{$arskursElev}',
+    skolaElev = '{$skolaElev}',
     betaltElev = '{$betaltElev}'
     WHERE elev_idPerson = '{$idPerson}';
 QUERY;
 
     } else { //Annars läggs en ny elev in.
         $query = <<<QUERY
-INSERT INTO {$tableElev} (elev_idPerson, personnummerElev, gruppElev, nationalitetElev, arskursElev, betaltElev)
-    VALUES ('{$idPerson}', '{$personnummerElev}', '{$gruppElev}', '{$nationalitetElev}', '{$arskursElev}', '{$betaltElev}');
+INSERT INTO {$tableElev} (elev_idPerson, personnummerElev, gruppElev, nationalitetElev, arskursElev, skolaElev, betaltElev)
+    VALUES ('{$idPerson}', '{$personnummerElev}', '{$gruppElev}', '{$nationalitetElev}', '{$arskursElev}', '{$skolaElev}', '{$betaltElev}');
 QUERY;
     }
     $dbAccess->SingleQuery($query);
