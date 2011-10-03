@@ -330,18 +330,85 @@ HTMLCode;
     break;
     
     case '12': //Lista till skolverket.
+        // Sorterar även på nationalitetMalsman för att skriva ut svenska målsman om det finns.
         $query = <<<Query
-SELECT fornamnPerson, efternamnPerson, gruppElev, fornamnMalsman, efternamnMalsman, ePostMalsman, mobilMalsman,
-        telefonBostad, adressBostad, stadsdelBostad FROM 
-    ((({$tablePerson} JOIN {$tableElev} ON idPerson = elev_idPerson)
-    JOIN {$tableBostad} ON person_idBostad = idBostad)
+SELECT idPerson, fornamnPerson, efternamnPerson, personnummerElev, arskursElev, nationalitetElev,  fornamnMalsman, 
+            efternamnMalsman, nationalitetMalsman FROM 
+    (({$tablePerson} JOIN {$tableElev} ON idPerson = elev_idPerson)
     JOIN {$viewMalsman} ON idPerson = idElev)
-    ORDER BY gruppElev, efternamnPerson;
+    ORDER BY efternamnPerson, idPerson, nationalitetMalsman DESC;
 Query;
-        $header = "<th>Namn</th><th>Grupp</th><th>Målsman</th><th>e-postadress</th><th>Mobil</th><th>Telefon</th>
-                  <th>Adress</th><th>Stadsdel</th>";
+        $result = $dbAccess->SingleQuery($query); 
+        $mainTextHTML = <<<HTMLCode
+<p>Markera alla data mellan rubrikerna och knapparna längst ner. Kopiera med ctrl-C. Gå in i Skolverkets excel-fil
+och ställ dig i första fältet på första raden i tabellen (under 'Elevens namn'). Högerklicka i det fältet och välj 
+'Klistra in special'. Markera 'Som: Text' och tryck på ok.</p>
+<table>
+<tr><th>Namn</th><th>Personnummer</th><th>Födelseår</th><th>Kön</th><th>F</th><th>1-6</th><th>7-9</th>
+    <th>Gymn</th><th>No</th><th>Fi</th><th>Öv</th><th>Målsman</th><th>Se</th></tr>
+HTMLCode;
+        $lastId = 0;
+        while($row = $result->fetch_row()) { //En gång per rad.
+            if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
+            if ($row[0] != $lastId) { //Raden skrivs ut om det inte är samma elev som förra raden.
+                
+                //Skriv ut namn på eleven.
+                $mainTextHTML .= "<tr style='font-size:10pt;'><td>{$row[1]} {$row[2]}</td>";
+                
+                //Personnummer
+                $personnummer = explode('-', $row[3]);
+                if ($personnummer[1] == '0010' OR $personnummer[1] == '0020') //Födelseår om personnummer saknas.
+                    $mainTextHTML .= "<td></td><td>".substr($personnummer[0], 0, 4)."</td>";
+                else //Om personnummer finns.
+                    $mainTextHTML .= "<td>".$personnummer[0]."-".$personnummer[1]."</td><td></td>";
+                
+                //Kön på eleven.
+                if (substr($personnummer[1], 2, 1) % 2) //Kolla om 3e siffran i kontrollnumret är udda eller jämn.
+                    $mainTextHTML .= "<td>p</td>";
+                else
+                    $mainTextHTML .= "<td>f</td>";
+                
+                //Årskurs
+                if ($row[4] == 'F') 
+                    $mainTextHTML .= "<td>X</td><td></td><td></td><td></td>";
+                elseif ($row[4] >= 1 AND $row[4]<= 6) 
+                    $mainTextHTML .= "<td></td><td>{$row[4]}</td><td></td><td></td>";
+                elseif ($row[4] >= 7 AND $row[4]<= 9)
+                    $mainTextHTML .= "<td></td><td></td><td>{$row[4]}</td><td></td>";
+                else {
+                    $gymn = $row[4] - 9;
+                    $mainTextHTML .= "<td></td><td></td><td></td><td>{$gymn}</td>";
+                }
+                
+                //Nationalitet
+                if ($row[5] == 'se') 
+                    $mainTextHTML .= "<td></td><td></td><td></td>";
+                elseif ($row[5] == 'no')
+                    $mainTextHTML .= "<td>X</td><td></td><td></td>";
+                elseif ($row[5] == 'fi')
+                    $mainTextHTML .= "<td></td><td>X</td><td></td>";
+                else
+                    $mainTextHTML .= "<td></td><td></td><td>X</td>";
+                
+                //Vårdnadshavare
+                $mainTextHTML .="<td>{$row[6]} {$row[7]}</td>";
+                if ($row[8] == 'se') 
+                    $mainTextHTML .= "<td>X</td>";
+                else
+                    $mainTextHTML .= "<td></td>";
+                
+                //Avslut
+                $mainTextHTML .= "</tr> \n";
+            }
+            $lastId = $row[0];
+        }
+        $mainTextHTML .= "</table> \n";
     break;
-}    
+
+
+}
+
+
 /*
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Sök i databasen och lista resultatet i en tabell.
