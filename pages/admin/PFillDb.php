@@ -69,9 +69,9 @@ Query;
             case 'tablePerson':
                 $query = <<<Query
 INSERT INTO {$tablePerson} (idPerson, accountPerson, passwordPerson, behorighetPerson, fornamnPerson, 
-    efternamnPerson, ePostPerson, mobilPerson, person_idBostad)
+    efternamnPerson, ePostPerson, mobilPerson, person_idBostad, senastInloggad)
 VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', '{$row[4]}', '{$row[5]}', '{$row[6]}', 
-    '{$row[7]}', '{$row[8]}');
+    '{$row[7]}', '{$row[8]}', '{$row[9]}');
 Query;
             break;
             case 'tableFunktionar':
@@ -88,8 +88,8 @@ Query;
             break;
             case 'tableElev':
                 $query = <<<Query
-INSERT INTO {$tableElev} (elev_idPerson, personnummerElev, gruppElev, nationalitetElev, arskursElev, betaltElev)
-VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', '{$row[4]}', '{$row[5]}');
+INSERT INTO {$tableElev} (elev_idPerson, personnummerElev, gruppElev, nationalitetElev, arskursElev, ordinarieSkola, betaltElev)
+VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', '{$row[4]}', '{$row[5]}', '{$row[6]}');
 Query;
             break;
             case 'tableRelation':
