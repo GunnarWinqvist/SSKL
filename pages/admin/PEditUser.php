@@ -115,16 +115,16 @@ Se vid <b>Elev</b> nedan.</p>
 <p><b>Uppdatera en gammal eller skapa en ny adress här.</b></p>
 <table class='formated'>
 <tr><td>Telefonnummer</td>
-<td><input type='text' name='telefon' size='40' maxlength='20' value='{$arrayPerson[10]}' /></td>
+<td><input type='text' name='telefon' size='40' maxlength='20' value='{$arrayPerson[11]}' /></td>
 <td class='td3'><input type='checkbox' name='editbostad' value='true' />Lägg till / Ändra (hela adressen)</td></tr>
 <tr><td>Adress</td>
-<td><input type='text' name='adress' size='40' maxlength='100' value='{$arrayPerson[11]}' /></td></tr>
+<td><input type='text' name='adress' size='40' maxlength='100' value='{$arrayPerson[12]}' /></td></tr>
 <tr><td>Stadsdel</td>
-<td><input type='text' name='stadsdel' size='40' maxlength='20' value='{$arrayPerson[12]}' /></td></tr>
+<td><input type='text' name='stadsdel' size='40' maxlength='20' value='{$arrayPerson[13]}' /></td></tr>
 <tr><td>Postnummer</td>
-<td><input type='text' name='postnummer' size='40' maxlength='10' value='{$arrayPerson[13]}' /></td></tr>
+<td><input type='text' name='postnummer' size='40' maxlength='10' value='{$arrayPerson[14]}' /></td></tr>
 <tr><td>Stat</td>
-<td><input type='text' name='stat' size='40' maxlength='20' value='{$arrayPerson[14]}' /></td></tr>
+<td><input type='text' name='stat' size='40' maxlength='20' value='{$arrayPerson[15]}' /></td></tr>
 <tr><td></td><td><i><small>(Kuala Lumpur, Selangor, ...)</small></i></td></tr>
 </table>
 HTMLCode;
