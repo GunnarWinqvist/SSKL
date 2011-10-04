@@ -80,6 +80,17 @@ if ($result=$dbAccess->SingleQuery($query)) {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+// Skriv in senast inloggad i databasen. 
+
+$tidPost        = time();
+$query = <<<QUERY
+UPDATE {$tablePerson} SET
+    senastInloggadPerson = '{$tidPost}'
+    WHERE idPerson  = '{$idPerson}';
+QUERY;
+$dbAccess->SingleQuery($query);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Redirect to another page
 
 // Om i debugmode så visa och avbryt innan redirect.

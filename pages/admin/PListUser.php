@@ -61,12 +61,14 @@ $mainTextHTML = <<<HTMLCode
     <th>Behörighet</th>
     <th>Förnamn</th>
     <th>Efternamn</th>
+    <th>Senast inloggad</th>
 </tr>
 HTMLCode;
 
 if ($result) {
     while($row = $result->fetch_row()) {
         if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
+        $fTidPost = date("l jS F Y G:i", $row[9]);
         $mainTextHTML .= <<<HTMLCode
 <tr>
     <td>{$row[0]}</td>
@@ -74,6 +76,7 @@ if ($result) {
     <td>{$row[3]}</td>
     <td>{$row[4]}</td>
     <td>{$row[5]}</td>
+    <td>{$fTidPost}</td>
     <td><a title='Visa' href='?p=show_user&amp;id={$row[0]}' ><img src='../images/page.png' alt='Visa' /></a></td>
     <td><a title='Editera' href='?p=edit_user&amp;id={$row[0]}'><img src='../images/page_edit.png' alt='Ändra' /></a></td>
     <td><a title='Konto' href='?p=edit_account&amp;id={$row[0]}'><img src='../images/page_key.png' alt='Konto' /></a></td>
