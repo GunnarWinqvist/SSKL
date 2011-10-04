@@ -87,11 +87,11 @@ if ($arrayPerson[8]) {
     $mainTextHTML .= <<<HTMLCode
 <h3>Bostad</h3>
 <table class='formated'>
-<tr><td>Telefonnummer</td><td>{$arrayPerson[10]}</td></tr>
-<tr><td>Adress</td><td>{$arrayPerson[11]}</td></tr>
-<tr><td>Stadsdel</td><td>{$arrayPerson[12]}</td></tr>
-<tr><td>Postnummer</td><td>{$arrayPerson[13]}</td></tr>
-<tr><td>Stat</td><td>{$arrayPerson[14]}</td></tr>
+<tr><td>Telefonnummer</td><td>{$arrayPerson[11]}</td></tr>
+<tr><td>Adress</td><td>{$arrayPerson[12]}</td></tr>
+<tr><td>Stadsdel</td><td>{$arrayPerson[13]}</td></tr>
+<tr><td>Postnummer</td><td>{$arrayPerson[14]}</td></tr>
+<tr><td>Stat</td><td>{$arrayPerson[15]}</td></tr>
 </table>
 
 HTMLCode;
