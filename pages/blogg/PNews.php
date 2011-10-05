@@ -45,6 +45,7 @@ $mainTextHTML = "";
 while($row = $result->fetch_row()) {
     if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
     list($idPost, $idPerson, $fornamnPerson, $efternamnPerson, $titelPost, $textPost, $tidPost) = $row;
+    date_default_timezone_set(WS_TIMEZONE);
     $fTidPost = date("l jS F Y G:i", $tidPost);
     $mainTextHTML .= <<<HTMLCode
 <div class='post'>

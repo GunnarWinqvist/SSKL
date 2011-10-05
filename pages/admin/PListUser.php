@@ -68,7 +68,8 @@ HTMLCode;
 if ($result) {
     while($row = $result->fetch_row()) {
         if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
-        $fTidPost = date("l jS F Y G:i", $row[9]);
+        date_default_timezone_set(WS_TIMEZONE);
+        $fTidPost = date("Y-m-d G:i", $row[9]);
         $mainTextHTML .= <<<HTMLCode
 <tr>
     <td>{$row[0]}</td>

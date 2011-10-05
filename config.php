@@ -47,6 +47,7 @@ define('WS_FOOTER', 		"Dispangulär har gjort den här web-platsen. <a href='mailt
 define('WS_CHARSET', 	    'windows-1252');              // Ange charset. windows-1252=svenska tecken
 define('WS_LANGUAGE',       'se');                         // Defaultspråk svenska.
 define('WS_UPDATED',        '2011 Sept 09');               // Senast uppdaterad.
+define('WS_TIMEZONE',       'Asia/Kuala_Lumpur');          // Tidszon för webplatsen.
 
 
 define('WS_DEBUG',          FALSE);                      // Visa debug-information    
