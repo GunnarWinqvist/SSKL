@@ -63,7 +63,7 @@ define('TP_DOCUMENTSPATH',  dirname(__FILE__) . '/documents/'); // Dokument.
 if ($host)
     define('TP_PEARPATH',       FALSE);                             // Om PEAR-biblioteket är centralt installerat.
 else
-    define('TP_PEARPATH',       dirname(__FILE__) . '/src/pear/PEAR/'); // Om PEAR-biblioteket är lokalt installerat.
+    define('TP_PEARPATH',       dirname(__FILE__) . '/pear/PEAR/'); // Om PEAR-biblioteket är lokalt installerat.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Meny-innehåll i array.
