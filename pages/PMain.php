@@ -26,17 +26,16 @@ $pageTitle = "Framsidan";
 
 // Lägg in din text för huvudkolumnen här nedan i HTML-kod.
 $mainTextHTML = <<<HTMLCode
-<h2>Välkommen till Svenska Skolan i Kuala Lumpur!</h2>
+<h2>Välkommen till Svenska Skolföreningen i Kuala Lumpur!</h2>
 <img class='floatRight' src='../images/klassrum.jpg' alt='Bild på klassrum' />
-<p>Svenska skolföreningen i Kuala Lumpur erbjuder kompletterande undervisning i svenska språket 
+<p>Svenska Skolföreningen i Kuala Lumpur erbjuder kompletterande undervisning i svenska 
 för barn i klass F - 6.</p>
 <p>Språk är inte bara ett sätt att kommunicera, språk är en länk till vår kultur och identitet. 
-Svenska skolans verksamhet har som syfte att upprätthålla och utveckla barnens kunskaper inom svenska 
+Svenska Skolföreningens verksamhet har som syfte att upprätthålla och utveckla barnens kunskaper inom svenska 
 språket, svenskt samhälle och kultur samt att stärka barnens identitet. </p>
-<p>Skolan bedriver verksamhet i enlighet med skolverkets kursplan för kompletterade svensk 
-undervisning.</p>
+<p>Skolan bedriver verksamhet i enlighet med skolverkets kursplan för kompletterade svenskundervisning.</p>
 <p>Vi strävar efter att den svenska skolan ska vara både rolig och lärorikt samt en mötesplats för 
-svensktalade barn. Svenska skolan i Kuala Lumpur välkomnar alla barn som lever i familjer där svenska 
+svensktalade barn. Svenska Skolföreningen i Kuala Lumpur välkomnar alla barn som lever i familjer där svenska 
 är ett levande språk och där minst en förälder är svensk medborgare.</p>
 <p><i>"Undervisningen i svenska syftar till att stärka elevernas uppfattning om sin identitet och 
 vidmakthålla och vidareutveckla sådana kunskaper som underlättar för eleverna att komma tillbaka till 
@@ -54,10 +53,10 @@ och lärarmöten.</p>
 
 <div class='clear'></div>
 <h3>Undervisningen</h3>
-<p>Svenska skolan erbjuder ett två-timmars lektionstillfälle per vecka. Undervisningen sker på onsdagar 
-mellan kl 15,30 och 17,00. Vi startar varje lektionstillfälle med att träffas kl 15.00 och äta mellanmål 
+<p>Svenska Skolföreningen erbjuder ett tvåtimmars lektionstillfälle per vecka. Undervisningen sker på onsdagar 
+mellan kl 15:30 och 17:00. Vi startar varje lektionstillfälle med att träffas kl 15:00 och äta mellanmål 
 tillsammans i kafeterian. Det är en bra möjlighet för barnen att lära känna varandra och knyta kontakter. 
-De får tillfälle att använda svenska språket även i andra situationer än i klassrummet och att det ger 
+De får tillfälle att använda svenska språket även i andra situationer än i klassrummet och det ger 
 barnen en bra övergång från undervisning på engelska till svenska.</p>
 <p>Lektionernas innehåll och upplägg för de olika grupperna varierar beroende på åldersgrupp och planeras 
 i enlighet med Skolverkets kursplan för kompletterande svenskaundervisning. Förutom den planlagda 

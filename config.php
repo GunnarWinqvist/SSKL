@@ -60,7 +60,7 @@ define('TP_SOURCEPATH', 	dirname(__FILE__) . '/src/');    // Klasser, funktioner
 define('TP_PAGESPATH', 	    dirname(__FILE__) . '/pages/');  // Pagecontrollers och moduler
 define('TP_IMAGESPATH',     dirname(__FILE__) . '/images/'); // Bilder och grafik.
 define('TP_DOCUMENTSPATH',  dirname(__FILE__) . '/documents/'); // Dokument.
-if ($host)
+if (!$host)
     define('TP_PEARPATH',       FALSE);                             // Om PEAR-biblioteket är centralt installerat.
 else
     define('TP_PEARPATH',       dirname(__FILE__) . '/pear/PEAR/'); // Om PEAR-biblioteket är lokalt installerat.
