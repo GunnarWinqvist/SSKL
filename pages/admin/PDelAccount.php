@@ -48,11 +48,13 @@ $idPerson 		        = $dbAccess->WashParameter($idPerson);
 $query = "SELECT idPerson, person_idBostad FROM {$tablePerson} WHERE person_idBostad = 
     (SELECT person_idBostad FROM {$tablePerson} WHERE idPerson = {$idPerson});";
 $result = $dbAccess->SingleQuery($query);
-$boende = $result->num_rows;
-$row = $result->fetch_row();
-if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
-$idBostad = $row[1];
-$result->close();
+if ($result) {
+    $boende = $result->num_rows;
+    $row = $result->fetch_row();
+    if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
+    $idBostad = $row[1];
+    $result->close();
+} else $boende = 0;
 
 // Ta bort användaren i resten av tabellerna. 
 $totalStatements = 7; //Måste uppdateras manuellt om antalet statements ändras.
