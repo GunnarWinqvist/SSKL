@@ -208,13 +208,14 @@ QUERY;
             }
         }
         if ($eMailAdr) {
-            $subject = "Nytt lösenord";
+            $subject = "Svenska skolforeningen";
             $text = <<<Text
-Din användarinformation till Svenska skolföreningens hemsida.
-Användarnamn: {$accountPerson}
-Lösenord: {$password1Person}
+Din anvandarinformation till Svenska skolforeningens hemsida.
 
-Du kan själv logga in på sidan och ändra ditt lösenord.
+Anvandarnamn: {$accountPerson}
+Losenord: {$passwordPerson}
+
+Du kan sjalv logga in och andra ditt losenord.
 Text;
             mail( $eMailAdr, $subject, $text);
         } else {
