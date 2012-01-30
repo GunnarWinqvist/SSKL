@@ -73,7 +73,7 @@ HTMLCode;
 <tr><td>Lösenord</td></tr>
 <tr><td><input type='password' name='password' size='20' maxlength='32' value='' /></td></tr>
 <tr><td><input type='image' title='Logga in' src='../images/b_login.gif' alt='Logga in' />
-<a title='Glömt?' href='?p=new_passw1'><img src='../images/b_help.gif' alt='Glömt?' /></a>
+<a title='Glömt?' href='?p=new_passw'><img src='../images/b_help.gif' alt='Glömt?' /></a>
 </td></tr>
 </table>
 </form>
