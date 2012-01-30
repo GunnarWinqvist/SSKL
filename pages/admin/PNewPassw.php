@@ -87,13 +87,13 @@ UPDATE {$tablePerson} SET
     WHERE idPerson = '{$row->idPerson}';
 QUERY;
         $dbAccess->SingleQuery($query);
-        $subject = "Nytt lösenord";
+        $subject = "Nytt losenord";
         $text = <<<Text
-Din användarinformation till Svenska skolföreningens hemsida.
-Användarnamn: {$row->accountPerson}
-Lösenord: {$pwd}
+Din anvandarinformation till Svenska skolforeningens hemsida.
+Anvandarnamn: {$row->accountPerson}
+Losenord: {$pwd}
 
-Du kan själv logga in på sidan och ändra ditt lösenord.
+Du kan sjalv logga in pa sidan och andra ditt losenord.
 Text;
         mail( $ePost, $subject, $text);
         $mainTextHTML .= "<p>Ett nytt lösenord har nu skickats till den angivna epostadressen.</p>  \n";
