@@ -92,7 +92,6 @@ switch($nextPage) {
     case 'edit_passw':  require_once(TP_PAGESPATH . 'admin/PEditPassword.php'); break;
     case 'new_passw1':  require_once(TP_PAGESPATH . 'admin/PNewPassw1.php');    break;
     case 'new_passw2':  require_once(TP_PAGESPATH . 'admin/PNewPassw2.php');    break;
-    case 'save_account':require_once(TP_PAGESPATH . 'admin/PSaveAccount.php');  break;
     case 'del_account': require_once(TP_PAGESPATH . 'admin/PDelAccount.php');   break;
 
     // Installera databasen

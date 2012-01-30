@@ -22,7 +22,6 @@ $intFilter->FrontControllerIsVisitedOrDie();
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Generera formuläret med QuickForm2.
 
-if (TP_PEARPATH) set_include_path(TP_PEARPATH);
 require_once 'HTML/QuickForm2.php';
 require_once 'HTML/QuickForm2/Renderer.php';
 
@@ -158,8 +157,6 @@ $renderer = HTML_QuickForm2_Renderer::factory('default')
 
 $form->render($renderer);
 
-// Output javascript libraries, needed by hierselect
-$mainTextHTML .= $renderer->getJavascriptBuilder()->getLibraries(true, true);
 $mainTextHTML .= $renderer;
 
 

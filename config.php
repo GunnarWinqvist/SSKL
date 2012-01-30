@@ -8,9 +8,8 @@
 //
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Körs koden på målservern?
+// Körs koden på målservern (TRUE) eller labmiljön 'localhost' (FALSE).
 $host = TRUE;
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,10 +59,13 @@ define('TP_SOURCEPATH', 	dirname(__FILE__) . '/src/');    // Klasser, funktioner
 define('TP_PAGESPATH', 	    dirname(__FILE__) . '/pages/');  // Pagecontrollers och moduler
 define('TP_IMAGESPATH',     dirname(__FILE__) . '/images/'); // Bilder och grafik.
 define('TP_DOCUMENTSPATH',  dirname(__FILE__) . '/documents/'); // Dokument.
-if (!$host)
-    define('TP_PEARPATH',       FALSE);                             // Om PEAR-biblioteket är centralt installerat.
-else
-    define('TP_PEARPATH',       dirname(__FILE__) . '/pear/PEAR/'); // Om PEAR-biblioteket är lokalt installerat.
+
+if ($host) {
+    set_include_path(dirname(__FILE__).'/pear/PEAR/');  // Peka ut PEAR-biblioteket.
+    ini_set( "SMTP", "send.one.com" );                  // Rätt mailservet för utgående post.
+    ini_set( "SMTP_port", "2525" );
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Meny-innehåll i array.
@@ -75,7 +77,7 @@ $menuElements = Array (
     'Länkar'        => 'links',
     'Karta'         => 'map',
     'Kontakt'       => 'contact',
-    'Anmälan'       => 'appl',
+    'Anmälan'       => 'appl'
 );
 define('WS_MENU', serialize($menuElements)); // Gör om menyelementen till en global konstant.
 

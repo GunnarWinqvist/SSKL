@@ -75,7 +75,6 @@ for ( $i=0; $i<rand($min,$max); $i++ ) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Generera formuläret med QuickForm2.
 
-if (TP_PEARPATH) set_include_path(TP_PEARPATH);
 require_once 'HTML/QuickForm2.php';
 require_once 'HTML/QuickForm2/Renderer.php';
 
@@ -181,6 +180,7 @@ QUERY;
     if ($debugEnable) $debug .= "idPerson: " . $idPerson . "<br /> \n";
 
     // Skicka lösenordet i mejl om detta är begärt.
+    
     if ($formValues['send']) {
         // Hämta mejladress. från personen eller dess målsman.
         $query = "SELECT ePostPerson FROM {$tablePerson} WHERE idPerson = '{$idPerson}';";
