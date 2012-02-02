@@ -50,7 +50,7 @@ define('WS_TIMEZONE',       'Asia/Kuala_Lumpur');          // Tidszon för webpla
 
 
 define('WS_DEBUG',          FALSE);                      // Visa debug-information    
-define('WS_VALIDATORS',     FALSE);	                    // Visa länkar till w3c validators tools.
+define('WS_VALIDATORS',     FALSE);	                     // Visa länkar till w3c validators tools.
 define('WS_TIMER', 		    FALSE);                      // Visa timer för sidgenerering.
 define('WS_WORK', 		    FALSE);                      // Arbete med siten pågår.
 
@@ -61,9 +61,9 @@ define('TP_IMAGESPATH',     dirname(__FILE__) . '/images/'); // Bilder och grafi
 define('TP_DOCUMENTSPATH',  dirname(__FILE__) . '/documents/'); // Dokument.
 
 if ($host) {
-    set_include_path(dirname(__FILE__).'/pear/PEAR/');  // Peka ut PEAR-biblioteket.
-    ini_set( "SMTP", "send.one.com" );                  // Rätt mailservet för utgående post.
-    ini_set( "SMTP_port", "2525" );
+    set_include_path(dirname(__FILE__).'/pear/PEAR/');      // Peka ut PEAR-biblioteket.
+    ini_set( "SMTP", "mailout.one.com" );                   // Rätt mailservet för utgående post.
+    ini_set( "SMTP_port", "21" );
 }
 
 

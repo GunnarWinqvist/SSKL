@@ -35,6 +35,10 @@ $ePost      = $fsAccount->addElement(
 $ePost->addRule('required', 'Fyll i din e-postadress som du registrerat i svenska skolans register.');
 $ePost->addRule('regex', 'Det är inte en korrekt e-postadress.', 
                 "/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/");
+$fsAccount->addElement('static', 'comment')
+               ->setContent('Denna tjänst fungerar för närvarande inte till gmail-adresser. Om du har en gmail-adress 
+                    registrerad i föreningens register så måste du skicka en lösenordsförfrågan manuellt till 
+                        registrering@svenskaskolankualalumpur.com');
 
 // Knappar
 $buttons = $form->addGroup('buttons')->setSeparator('&nbsp;');

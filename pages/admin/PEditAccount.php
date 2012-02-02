@@ -116,6 +116,10 @@ $newPasswordPerson->addRule('eq', 'Du har angett två olika lösenord.', $password
 // Skicka lösenord?
 $sendPassword = $fsAccount->addElement('checkbox', 'send', array('value' => '1'))
     ->setContent('Skicka lösenordet med mejl till användaren');
+$fsAccount->addElement('static', 'comment')
+               ->setContent('Denna tjänst fungerar för närvarande inte till gmail-adresser. Om du har en gmail-adress 
+                    registrerad i föreningens register så måste du skicka en lösenordsförfrågan manuellt till 
+                        registrering@svenskaskolankualalumpur.com');
 
 
 // Behörighetsgrupp
@@ -180,7 +184,6 @@ QUERY;
     if ($debugEnable) $debug .= "idPerson: " . $idPerson . "<br /> \n";
 
     // Skicka lösenordet i mejl om detta är begärt.
-    
     if ($formValues['send']) {
         // Hämta mejladress. från personen eller dess målsman.
         $query = "SELECT ePostPerson FROM {$tablePerson} WHERE idPerson = '{$idPerson}';";
@@ -207,25 +210,37 @@ QUERY;
                 $eMailAdr = "";
             }
         }
-        if ($eMailAdr) {
-            $subject = "Svenska skolforeningen";
+        if ($eMailAdr) { // Om vi har hittat en e-postadress.
+            $headers =  "From: registrering@svenskaskolankualalumpur.com"."\r\n".
+                        "Reply-To: registrering@svenskaskolankualalumpur.com"."\r\n".
+                        "Content-type: text/html; charset=iso-8859-1"."\r\n".
+                        "MIME-Version: 1.0"."\r\n".
+                        "Return-Path: <registrering@svenskaskolankualalumpur.com>";
+            $subject = "Svenska skolföreningen";
             $text = <<<Text
-Din anvandarinformation till Svenska skolforeningens hemsida.
+Din användarinformation till Svenska skolföreningens hemsida.
 
-Anvandarnamn: {$accountPerson}
-Losenord: {$passwordPerson}
+Användarnamn: {$accountPerson}
+Lösenord: {$passwordPerson}
 
-Du kan sjalv logga in och andra ditt losenord.
+Du kan själv logga in och ändra ditt lösenord.
+
 Text;
-            mail( $eMailAdr, $subject, $text);
-        } else {
+            mail( $eMailAdr, $subject, $text, $headers);
+            if ($debugEnable) $debug .= "Mail to: ".$eMailAdr." Subj: ".$subject." Headers: ".$headers."<br /> \n";
+        } else { // Om vi inte har hittat någon adress.
             $_SESSION['errorMessage'] = "Det finns ingen mejladress att skicka lösenordet till i databasen!";
         }
     }
     
-    // Hoppa vidare till nästa sida.
-    header('Location: ' . WS_SITELINK . "?p={$redirect}");
-    exit;
+    // Hoppa vidare till nästa sida om inte debug.
+    if ($debugEnable) {
+        $form->removeChild($buttons);   // Tag bort knapparna.
+        $form->toggleFrozen(true);      // Frys formuläret inför ny visning.
+    } else {
+        header('Location: ' . WS_SITELINK . "?p={$redirect}");
+        exit;
+    }
 }
 
 
