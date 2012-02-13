@@ -1,0 +1,4 @@
+AuthName "Web-based PEAR Frontend"
+AuthType Basic
+AuthUserFile /customers/svenskaskolankualalumpur.com/svenskaskolankualalumpur.com/httpd.www/pear/.htpasswd
+Require valid-user
