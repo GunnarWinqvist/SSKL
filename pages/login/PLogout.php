@@ -38,7 +38,8 @@ $redirect = "main";
 
 // Om i debugmode så visa och avbryt innan redirect.
 if ($debugEnable) {
-    echo "Logout genomförd.";
+    echo "<p>Logout genomförd.</p>";
+    echo "<a title='Vidare' href='?p={$redirect}'>Vidare</a> <br />\n";
     exit();
 }
 

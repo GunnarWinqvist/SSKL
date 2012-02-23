@@ -73,6 +73,12 @@ if ($result=$dbAccess->SingleQuery($query)) {
         if ($dbAccess->SingleQuery($query)) $_SESSION['authorityUser'] = 'fnk';
     }
     $result->close();
+    
+    // Skriv in senast inloggad i databasen. 
+    $time = time();
+    $query = "UPDATE {$tablePerson} SET senastInloggadPerson = '{$time}' WHERE idPerson  = '{$idPerson}';";
+    $dbAccess->SingleQuery($query);
+
 } else {
     $_SESSION['errorMessage']      = "Inloggningen misslyckades";
     $_POST['redirect']             = $redirect;
@@ -80,22 +86,12 @@ if ($result=$dbAccess->SingleQuery($query)) {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Skriv in senast inloggad i databasen. 
-
-$tidPost        = time();
-$query = <<<QUERY
-UPDATE {$tablePerson} SET
-    senastInloggadPerson = '{$tidPost}'
-    WHERE idPerson  = '{$idPerson}';
-QUERY;
-$dbAccess->SingleQuery($query);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
 // Redirect to another page
 
 // Om i debugmode så visa och avbryt innan redirect.
 if ($debugEnable) {
     echo $debug;
+    echo "<a title='Vidare' href='?p={$redirect}'>Vidare</a> <br />\n";
     exit();
 }
 
