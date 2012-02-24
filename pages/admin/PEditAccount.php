@@ -26,7 +26,7 @@ $intFilter->UserIsAuthorisedOrDie('adm');         // Måste vara minst adm för at
 // Tag hand om inparametrar till sidan om det finns och bestäm vilken som är nästa sida.
 
 $idPerson = isset($_GET['id']) ? $_GET['id'] : NULL;
-if ($idPerson) $redirect = "show_user&id=".$idPerson;
+if ($idPerson) $redirect = "show_user&amp;id=".$idPerson;
 else           $redirect = "search_user";
 
 
@@ -85,7 +85,8 @@ $form       = new HTML_QuickForm2('account', 'post', array('action' => $formActi
 $form->addDataSource(new HTML_QuickForm2_DataSource_Array(array(
     'account'     => $arrayPerson[1],
     'password'    => $pwd,
-    'passwordRep' => $pwd
+    'passwordRep' => $pwd,
+    'send'        => '0'
 )));
 
 $fsAccount = $form->addElement('fieldset')->setLabel('Användarkonto');
@@ -117,7 +118,7 @@ $newPasswordPerson->addRule('eq', 'Du har angett två olika lösenord.', $password
 $sendPassword = $fsAccount->addElement('checkbox', 'send', array('value' => '1'))
     ->setContent('Skicka lösenordet med mejl till användaren');
 $fsAccount->addElement('static', 'comment')
-               ->setContent('Denna tjänst fungerar för närvarande inte till gmail-adresser. Om du har en gmail-adress 
+               ->setContent('Det går för närvarande inte att skicka lösenordet till gmail-adresser. Om du har en gmail-adress 
                     registrerad i föreningens register så måste du skicka en lösenordsförfrågan manuellt till 
                         registrering@svenskaskolankualalumpur.com');
 
@@ -136,6 +137,7 @@ if ($arrayPerson[3] == "adm") {
         ->setContent('Administratör');
 }
 
+
 // Knappar
 $buttons = $form->addGroup('buttons')->setSeparator('&nbsp;');
 $buttons->addElement('image', 'submitButton', array('src' => '../images/b_enter.gif', 'title' => 'Spara'));
@@ -151,9 +153,11 @@ $buttons->addElement('static', 'cancelButton')
 // Ta bort 'space' först och sist på alla värden.
 $form->addRecursiveFilter('trim'); 
 
+$mainTextHTML = "";
+
 //Om sidan är riktigt ifylld så uppdatera databasen.
 if ($form->validate()) {
-
+    
     //Tvätta inparametrarna.
     $formValues       = $form->getValue();
     $accountPerson 	  = $dbAccess->WashParameter(strip_tags($formValues['account']));
@@ -179,12 +183,12 @@ QUERY;
     // Om $idPerson inte innehåller något är det en ny användare. Hämta då dennes id.
     if (!$idPerson) {
         $idPerson = $dbAccess->LastId();
-        $redirect = "show_user&id=".$idPerson;
+        $redirect = "edit_user&id=".$idPerson;
     }
     if ($debugEnable) $debug .= "idPerson: " . $idPerson . "<br /> \n";
 
     // Skicka lösenordet i mejl om detta är begärt.
-    if ($formValues['send']) {
+    if (isset($formValues['send'])) {
         // Hämta mejladress. från personen eller dess målsman.
         $query = "SELECT ePostPerson FROM {$tablePerson} WHERE idPerson = '{$idPerson}';";
         $result = $dbAccess->SingleQuery($query);
@@ -237,6 +241,8 @@ Text;
     if ($debugEnable) {
         $form->removeChild($buttons);   // Tag bort knapparna.
         $form->toggleFrozen(true);      // Frys formuläret inför ny visning.
+        $mainTextHTML .= "<a title='Vidare' href='?p={$redirect}'><img src='../images/b_enter.gif' alt='Vidare' /></a> <br />\n";
+
     } else {
         header('Location: ' . WS_SITELINK . "?p={$redirect}");
         exit;
@@ -253,16 +259,16 @@ $renderer = HTML_QuickForm2_Renderer::factory('default')
         'group_errors'  => true,
         'errors_prefix' => 'Följand information saknas eller är felaktigt ifylld:',
         'errors_suffix' => '',
-        'required_note' => ''
+        'required_note' => 'Obligatoriska fält är markerade med <em>*</em>'
     ))
     ->setTemplateForId('submit', '<div class="element">{element} or <a href="/">Cancel</a></div>')
-    ->setTemplateForClass(
+/*    ->setTemplateForClass(
         'HTML_QuickForm2_Element_Input',
         '<div class="element<qf:error> error</qf:error>"><qf:error>{error}</qf:error>' .
         '<label for="{id}" class="qf-label<qf:required> required</qf:required>">{label}</label>' .
         '{element}' .
         '<qf:label_2><div class="qf-label-1">{label_2}</div></qf:label_2></div>' 
-    );
+    )*/;
 
 $form->render($renderer);
 
@@ -273,11 +279,10 @@ $form->render($renderer);
 $page = new CHTMLPage(); 
 $pageTitle = "Editera användarkonto";
 
-$mainTextHTML = <<<HTMLCode
+$mainTextHTML .= <<<HTMLCode
 <h2>{$pageTitle}</h2>
 <p>Formulär för att skapa en ny användaridentitet eller editera en gammal.</p>
 <p>Lösenordet är slumpgenererat. Vill du byta så gör det.</p>
-<p>Obligatoriska fält är markerade med en (<em style="color:red;">*</em>).</p>
 HTMLCode;
 
 $mainTextHTML .= $renderer;

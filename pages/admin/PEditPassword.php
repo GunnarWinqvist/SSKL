@@ -146,16 +146,16 @@ $renderer = HTML_QuickForm2_Renderer::factory('default')
         'group_errors'  => true,
         'errors_prefix' => 'Följand information saknas eller är felaktigt ifylld:',
         'errors_suffix' => '',
-        'required_note' => 'Obligatoriska fält är markerade med en (<em>*</em>).'
+        'required_note' => 'Obligatoriska fält är markerade med en <em>*</em>'
     ))
     ->setTemplateForId('submit', '<div class="element">{element} or <a href="/">Cancel</a></div>')
-    ->setTemplateForClass(
+    /*->setTemplateForClass(
         'HTML_QuickForm2_Element_Input',
         '<div class="element<qf:error> error</qf:error>"><qf:error>{error}</qf:error>' .
         '<label for="{id}" class="qf-label<qf:required> required</qf:required>">{label}</label>' .
         '{element}' .
         '<qf:label_2><div class="qf-label-1">{label_2}</div></qf:label_2></div>' 
-    );
+    )*/;
 
 $form->render($renderer);
 $mainTextHTML .= $renderer;

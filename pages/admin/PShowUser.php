@@ -187,6 +187,8 @@ HTMLCode;
 HTMLCode;
 }
 
+$mainTextHTML .= "</div> <!-- End Admin --> \n <br /> \n";
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Lägg till knappar för editering och ändra lösenord. Olika för admin.
@@ -205,7 +207,6 @@ HTMLCode;
 HTMLCode;
 }
 
-$mainTextHTML .= "</div> <!-- End Admin --> \n";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Om sidan inte får visas avbryt och visa felmeddelande.

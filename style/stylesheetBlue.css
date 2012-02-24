@@ -430,22 +430,92 @@ th {
 /* Inställningar för QuickForm-formulär.                               */
 /***********************************************************************/
 
-/*.quickform { margin: 5px; padding: 5px; background-color: #FFF; }*/
 .quickform { margin: 5px; padding: 5px; }
+/*.quickform form {
+    margin: 0;
+    padding: 0;
+}*/
+
 .quickform form fieldset { margin: 10px 0; padding: 10px; border: #DDD 1px solid; background-color: #FFF; }
+/*.quickform fieldset {
+    clear: both;
+    border: 1px solid #808080;
+    margin: 0.2em 0 0 0;
+    padding: 0.5em;
+}*/
+
 .quickform form legend { font-weight: bold; color: #666; }
-.quickform form div.element { padding: 0.25em 0; }
-.quickform form label,
+/*.quickform fieldset legend {
+    white-space: nowrap;
+    font-weight: bold;
+    background-color: #CCCCCC;
+    padding: 0.1em 0.5em;
+    display: block;
+    margin: 0;
+}*/
+
+/*.quickform form label,
 .quickform span.qf-label { margin-right: 10px; padding-right: 10px; width: 150px; display: block; float: left; text-align: right; position: relative; }
-.quickform form .required:after { position: absolute; right: 0; font-size: 120%; font-style: normal; color: #C00; content: "*"; }
 .quickform form .qf-label-1 { margin-left:160px; padding-left:10px; color:#888; font-size: 85%; }
+*/
+.quickform label {
+    margin: 0 0 0 0.5em;
+}
+.quickform label.element {
+    display: block;
+    float: left;
+    width: 20%;
+    padding: 0;
+    margin: 0.5em 0 0 0;
+    text-align: right;
+}
+.quickform input, .quickform textarea, .quickform select {
+    width: auto;
+}
+.quickform textarea {
+    overflow: auto;
+}
+.quickform br {
+    clear: left;
+}
+.quickform div.row {
+    padding: 0;
+    margin: 0;
+    clear: both;
+}
+
+//.quickform form div.element { padding: 0.25em 0; }
+.quickform div.element {
+    display: inline;
+    float: left;
+    margin: 0.5em 0 0 1em;
+    padding: 0;
+}
+
+/*.quickform form .required:after { position: absolute; right: 0; font-size: 120%; font-style: normal; color: #C00; content: "*"; }
 .quickform div.reqnote { font-size: 92%; color: #555; }
-.quickform div.reqnote em { font-style: normal; color: #C00; }
 .quickform div.reqnote strong { color:#000; font-weight: bold; }
+*/
+
+.quickform div.reqnote em { font-style: normal; color: #C00; }
+.quickform div.reqnote {
+    clear: both;
+    font-size: 80%; 
+    margin: 0.5em 0 0 1em;
+}
+.quickform span.error, .quickform span.required {
+    color: red;
+}
+
 .quickform div.errors { background-color: #FEE; border: 1px solid #ECC; padding:5px; margin:0 0 20px 0 }
 .quickform div.errors p,
 .quickform div.errors ul { margin:0; }
 .quickform div.error input { border-color: #C00; background-color: #FEF; }
+/*.quickform div.error {
+    border: 1px solid red;
+    padding: 0.5em;
+}*/
+
 .quickform div.qf-checkable label, 
 .quickform div.qf-checkable input { display: inline; float: none; }
 .quickform div.qf-checkable div,

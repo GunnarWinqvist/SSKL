@@ -81,13 +81,15 @@ if ($boende == 1) {
 // Redirect to another page
 //
 
+$redirect = "search_user";
+
 // Om i debugmode så visa och avbryt innan redirect.
 if ($debugEnable) {
     echo $debug;
+    echo "<a title='Vidare' href='?p={$redirect}'>Vidare</a> <br />\n";
     exit();
 }
 
-$redirect = "list_user";
 header('Location: ' . WS_SITELINK . "?p={$redirect}");
 exit;
 

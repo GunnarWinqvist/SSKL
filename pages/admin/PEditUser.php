@@ -35,7 +35,7 @@ $tableRelation      = DB_PREFIX . 'Relation';
 
 $idPerson = isset($_GET['id']) ? $_GET['id'] : NULL;
 $idPerson = $dbAccess->WashParameter($idPerson);
-if ($debugEnable) $debug .= "Input: id=" . $idPerson . "<br /> \n";
+if ($debugEnable) $debug .= "Input: id=" . $idPerson . " Authority = ".$_SESSION['authorityUser']."<br /> \n";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,11 +159,10 @@ $mobilPerson->addRule('maxlength', 'Mobilnumret är för långt för databasen.', 20
 
 
 // Funktionär
-$fsFunk = $form->addElement('fieldset')->setLabel('Funktionär');
-
-if (strcmp("fnk", $_SESSION['authorityUser']) > 0 ) { // Visa bara om man är funktionär eller adm. Annars kan 
-                    // man sätta sig själv till funk och få tillgång till mer än man ska.
-
+if ($_SESSION['authorityUser'] == 'fnk' or  $_SESSION['authorityUser'] == 'adm') { 
+    // Visa bara om man är funktionär eller adm. Annars kan 
+    // man sätta sig själv till funk och få tillgång till mer än man ska.
+    $fsFunk = $form->addElement('fieldset')->setLabel('Funktionär');
     if (isset($arrayResult[1])) { //Resultat från queryn från början av sidan.
         while($row = $arrayResult[1]->fetch_object()) {
             $fsFunk->addElement('checkbox', 'delFunk', array('value' => $row->idFunktion))
@@ -180,110 +179,114 @@ if (strcmp("fnk", $_SESSION['authorityUser']) > 0 ) { // Visa bara om man är fun
 
 
 // Målsman
-$fsMalsman = $form->addElement('fieldset')->setLabel('Målsman');
-if ($arrayMalsman[0]) {
-    $fsMalsman->addElement('checkbox', 'delMalsman', array('value' => $arrayMalsman[0]))
-                        ->setContent('<small>Radera som målsman</small>')
-                        ->setLabel($arrayPerson[4].' är målsman');
-} else {
-    $fsMalsman->addElement('checkbox', 'addMalsman', array('value' => '1'))
-        ->setLabel('Gör '.$arrayPerson[4].' till målsman');
+if ($_SESSION['authorityUser'] == 'adm') { 
+    $fsMalsman = $form->addElement('fieldset')->setLabel('Målsman');
+    if ($arrayMalsman[0]) {
+        $fsMalsman->addElement('checkbox', 'delMalsman', array('value' => $arrayMalsman[0]))
+                            ->setContent('<small>Radera som målsman</small>')
+                            ->setLabel($arrayPerson[4].' är målsman');
+    } else {
+        $fsMalsman->addElement('checkbox', 'addMalsman', array('value' => '1'))
+            ->setLabel('Gör '.$arrayPerson[4].' till målsman');
+    }
+    $nationalitetMalsman = $fsMalsman->addElement('select', 'natMalsman', null, 
+                                array('options' => $nationality, 'label' => 'Nationalitet') );
 }
-$nationalitetMalsman = $fsMalsman->addElement('select', 'natMalsman', null, 
-                            array('options' => $nationality, 'label' => 'Nationalitet') );
-
 
 // Elev
-$fsElev = $form->addElement('fieldset')->setLabel('Elev');
+if ($_SESSION['authorityUser'] == 'adm') { 
+    $fsElev = $form->addElement('fieldset')->setLabel('Elev');
 
-if ($arrayElev[0]) {
-    $fsElev->addElement('checkbox', 'delElev', array('value' => $arrayElev[0]))
-                        ->setContent('<small>Radera som elev</small>')
-                        ->setLabel($arrayPerson[4].' är elev');
-} else {
-    $fsElev->addElement('checkbox', 'addElev', array('value' => '1'))
-        ->setLabel('Gör '.$arrayPerson[4].' till elev');
-}
-
-$fsElev->addElement('static', 'comment')
-               ->setContent('<small><i>Fyll i svenskt personnummer om eleven har det, annars födelsedatum.</i></small>');
-$personnummerElev = $fsElev->addElement(
-    'text', 'personnummer', array('style' => 'width: 300px;'), array('label' => 'Personnummer') );
-$personnummerElev->addRule('regex', 'Personnumret måste ha formen ååååmmdd-nnnn. Födelsedatum formen ååååmmdd.', 
-    '/^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(-\d{4})?$/');
-
-$gruppElev = $fsElev->addElement(
-    'text', 'grupp', array('style' => 'width: 300px;'), array('label' => 'Vilken grupp är eleven i') );
-$gruppElev->addRule('maxlength', 'Gruppnamnet är för långt för databasen.', 10);
-
-$nationalitetElev = $fsElev->addElement(
-    'select', 'nat', null, array('options' => $nationality, 'label' => 'Nationalitet') );
-
-$arskursElev = $fsElev->addElement(
-    'text', 'grade', array('style' => 'width: 300px;'), array('label' => 'Årskurs i ordinarie skola') );
-$arskursElev->addRule('maxlength', 'Årskursen kan bara bestå av 2 tecken.', 2);
-
-$skolaElev = $fsElev->addElement(
-    'text', 'skola', array('style' => 'width: 300px;'), array('label' => 'Ordinarie skola') );
-$skolaElev->addRule('maxlength', 'Skolnamnet kan bara bestå av 50 tecken.', 50);
-
-if (strcmp("fnk", $_SESSION['authorityUser']) > 0 ) {
-    $betaltElev = $fsElev->addElement(
-        'text', 'pay', array('style' => 'width: 300px;'), array('label' => 'Senast betalt') );
-    $betaltElev->addRule('maxlength', 'Senast betalt kan bara bestå av 10 tecken.', 10);
-}
-
-$fsElev->addElement('static', 'comment')
-               ->setLabel('Målsman för eleven:');
-
-// Lista målsmän för eleven.
-if (isset($aMalsmanElev)) { 
-    $i=0;
-    foreach($aMalsmanElev as $malsmanElev) {
-        $fsElev->addElement('checkbox', 'delMalsmanElev', array('value' => $malsmanElev['id']))
-                    ->setContent('<small>Radera malsman</small>')
-                    ->setLabel($malsmanElev['fornamn']." ".$malsmanElev['efternamn']);
+    if ($arrayElev[0]) {
+        $fsElev->addElement('checkbox', 'delElev', array('value' => $arrayElev[0]))
+                            ->setContent('<small>Radera som elev</small>')
+                            ->setLabel($arrayPerson[4].' är elev');
+    } else {
+        $fsElev->addElement('checkbox', 'addElev', array('value' => '1'))
+            ->setLabel('Gör '.$arrayPerson[4].' till elev');
     }
-}
 
-// Lista alla möjliga målsmän.
-$query = <<<QUERY
-SELECT idPerson, fornamnPerson, efternamnPerson FROM {$tablePerson}	INNER JOIN {$tableMalsman}
-		ON {$tablePerson}.idPerson = {$tableMalsman}.malsman_idPerson ORDER BY efternamnPerson;
-QUERY;
-$result = $dbAccess->SingleQuery($query);
-while($row = $result->fetch_object()) {
-    $malsmanList[$row->idPerson] = $row->fornamnPerson." ".$row->efternamnPerson;
+    $fsElev->addElement('static', 'comment')
+                   ->setContent('<small><i>Fyll i svenskt personnummer om eleven har det, annars födelsedatum.</i></small>');
+    $personnummerElev = $fsElev->addElement(
+        'text', 'personnummer', array('style' => 'width: 300px;'), array('label' => 'Personnummer') );
+    $personnummerElev->addRule('regex', 'Personnumret måste ha formen ååååmmdd-nnnn. Födelsedatum formen ååååmmdd.', 
+        '/^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(-\d{4})?$/');
+
+    $gruppElev = $fsElev->addElement(
+        'text', 'grupp', array('style' => 'width: 300px;'), array('label' => 'Vilken grupp är eleven i') );
+    $gruppElev->addRule('maxlength', 'Gruppnamnet är för långt för databasen.', 10);
+
+    $nationalitetElev = $fsElev->addElement(
+        'select', 'nat', null, array('options' => $nationality, 'label' => 'Nationalitet') );
+
+    $arskursElev = $fsElev->addElement(
+        'text', 'grade', array('style' => 'width: 300px;'), array('label' => 'Årskurs i ordinarie skola') );
+    $arskursElev->addRule('maxlength', 'Årskursen kan bara bestå av 2 tecken.', 2);
+
+    $skolaElev = $fsElev->addElement(
+        'text', 'skola', array('style' => 'width: 300px;'), array('label' => 'Ordinarie skola') );
+    $skolaElev->addRule('maxlength', 'Skolnamnet kan bara bestå av 50 tecken.', 50);
+
+    if (strcmp("fnk", $_SESSION['authorityUser']) > 0 ) {
+        $betaltElev = $fsElev->addElement(
+            'text', 'pay', array('style' => 'width: 300px;'), array('label' => 'Senast betalt') );
+        $betaltElev->addRule('maxlength', 'Senast betalt kan bara bestå av 10 tecken.', 10);
+    }
+
+    $fsElev->addElement('static', 'comment')
+                   ->setLabel('Målsman för eleven:');
+
+    // Lista målsmän för eleven.
+    if (isset($aMalsmanElev)) { 
+        $i=0;
+        foreach($aMalsmanElev as $malsmanElev) {
+            $fsElev->addElement('checkbox', 'delMalsmanElev', array('value' => $malsmanElev['id']))
+                        ->setContent('<small>Radera malsman</small>')
+                        ->setLabel($malsmanElev['fornamn']." ".$malsmanElev['efternamn']);
+        }
+    }
+
+    // Lista alla möjliga målsmän.
+    $query = "SELECT idPerson, fornamnPerson, efternamnPerson FROM {$tablePerson}	INNER JOIN {$tableMalsman}
+                ON {$tablePerson}.idPerson = {$tableMalsman}.malsman_idPerson ORDER BY efternamnPerson;";
+    $result = $dbAccess->SingleQuery($query);
+    while($row = $result->fetch_object()) {
+        $malsmanList[$row->idPerson] = $row->fornamnPerson." ".$row->efternamnPerson;
+    }
+    $result->close();
+    $fsElev->addElement(
+        'select', 'addMalsmanElev', array('multiple' => 'multiple', 'size' => 3),
+        array('options' => $malsmanList, 'label' => 'Välj en eller flera nya målsmän:<br /><small>Håll ner ctrl för flera</small>'));
 }
-$result->close();
-$fsElev->addElement(
-    'select', 'addMalsmanElev', array('multiple' => 'multiple', 'size' => 3),
-    array('options' => $malsmanList, 'label' => 'Välj en eller flera nya målsmän:<br /><small>Håll ner ctrl för flera</small>'));
-    
 
 // Bostad
 $fsBostad = $form->addElement('fieldset')->setLabel('Bostad');
 
 // Samma bostad som första målsman.
-if (isset($aMalsmanElev)) { 
-    $fsBostad->addElement('checkbox', 'sammaBostadSomMalsman', array('value' => $aMalsmanElev[0]['id']))
-                ->setContent($aMalsmanElev[0]['fornamn'].$aMalsmanElev[0]['efternamn'])
-                ->setLabel('Samma bostad som målsman');
-} else {
-    $fsBostad->addElement('checkbox', 'sammaBostadSomMalsman', array('value' => 'same'))
-                ->setLabel('Samma bostad som målsman ovan');
+if ($_SESSION['authorityUser'] == 'adm') { 
+    if (isset($aMalsmanElev)) { 
+        $fsBostad->addElement('checkbox', 'sammaBostadSomMalsman', array('value' => $aMalsmanElev[0]['id']))
+                    ->setContent($aMalsmanElev[0]['fornamn'].$aMalsmanElev[0]['efternamn'])
+                    ->setLabel('Samma bostad som målsman');
+    } else {
+        $fsBostad->addElement('checkbox', 'sammaBostadSomMalsman', array('value' => 'same'))
+                    ->setLabel('Samma bostad som målsman ovan');
+    }
 }
 
 // Samma bostad som någon annan.
-$query = "SELECT idPerson, fornamnPerson, efternamnPerson FROM {$tablePerson} ORDER BY efternamnPerson;";
-$result = $dbAccess->SingleQuery($query);
-$bostadLista = array("" => "");
-while($row = $result->fetch_object()) {
-    $bostadLista[$row->idPerson] = $row->fornamnPerson." ".$row->efternamnPerson;
+if ($_SESSION['authorityUser'] == 'adm') { 
+    $query = "SELECT idPerson, fornamnPerson, efternamnPerson FROM {$tablePerson} ORDER BY efternamnPerson;";
+    $result = $dbAccess->SingleQuery($query);
+    $bostadLista = array("" => "");
+    while($row = $result->fetch_object()) {
+        $bostadLista[$row->idPerson] = $row->fornamnPerson." ".$row->efternamnPerson;
+    }
+    $result->close();
+    $fsBostad->addElement(
+            'select', 'sammaBostadSomAnnan', null, array('options' => $bostadLista, 'label' => 'Samma bostad som:') );
 }
-$result->close();
-$fsBostad->addElement(
-        'select', 'sammaBostadSomAnnan', null, array('options' => $bostadLista, 'label' => 'Samma bostad som:') );
 
 // Eller editera bostadsadress
 $adressBostad = $fsBostad->addElement(
@@ -313,7 +316,7 @@ $buttons->addElement('image', 'submitButton', array('src' => '../images/b_enter.
 $buttons->addElement('static', 'resetButton')
     ->setContent('<a title="Återställ" href="?p=edit_user&amp;id='.$idPerson.'" ><img src="../images/b_undo.gif" alt="Återställ" /></a>');
 $buttons->addElement('static', 'cancelButton')
-    ->setContent('<a title="Avbryt" href="?p=show_user&id='.$idPerson.'" ><img src="../images/b_cancel.gif" alt="Avbryt" /></a>');
+    ->setContent('<a title="Avbryt" href="?p=show_user&amp;id='.$idPerson.'" ><img src="../images/b_cancel.gif" alt="Avbryt" /></a>');
 
 
 
@@ -355,7 +358,7 @@ QUERY;
     }
     
     // Lägg till funktion för funktionär.
-    if ($formValues['addFunk']) {
+    if (isset($formValues['addFunk'])) {
         $funktion = $dbAccess->WashParameter(strip_tags($formValues['addFunk']));
         if ($debugEnable) $debug .= "addFunk=".$funktion."<br /> \n";
         $query = <<<QUERY
@@ -366,62 +369,64 @@ QUERY;
     }
 
     //Målsman
-    if (isset($formValues['delMalsman'])) {
-        // Radera en målsman ur relationstabellen och målsmantabellen.
-        $query = "DELETE FROM {$tableRelation} WHERE relation_idMalsman = '{$idPerson}';";
-        $dbAccess->SingleQuery($query);
-        $query = "DELETE FROM {$tableMalsman} WHERE malsman_idPerson = '{$idPerson}';";
-        $dbAccess->SingleQuery($query);
-    } else {
-        $nationalitetMalsman = $formValues['natMalsman'];
-        if (isset($formValues['addMalsman'])) {
-            // Lägg till en målsman.
-            $query = "INSERT INTO {$tableMalsman} (malsman_idPerson, nationalitetMalsman) VALUES ('{$idPerson}', '{$nationalitetMalsman}');";
+    if ($_SESSION['authorityUser'] == 'adm') { 
+        if (isset($formValues['delMalsman'])) {
+            // Radera en målsman ur relationstabellen och målsmantabellen.
+            $query = "DELETE FROM {$tableRelation} WHERE relation_idMalsman = '{$idPerson}';";
+            $dbAccess->SingleQuery($query);
+            $query = "DELETE FROM {$tableMalsman} WHERE malsman_idPerson = '{$idPerson}';";
+            $dbAccess->SingleQuery($query);
         } else {
-            // Eller uppdatera nationaliteten på en målsman.
-            // Om personen inte inte är målsman och heller inte ska bli målsman så finns inte personen i tabellen målsman och
-            // därför blir queryn bara ignorerad.
-            $query = "UPDATE {$tableMalsman} SET nationalitetMalsman = '{$nationalitetMalsman}' WHERE malsman_idPerson = '{$idPerson}';";
+            $nationalitetMalsman = $formValues['natMalsman'];
+            if (isset($formValues['addMalsman'])) {
+                // Lägg till en målsman.
+                $query = "INSERT INTO {$tableMalsman} (malsman_idPerson, nationalitetMalsman) VALUES ('{$idPerson}', '{$nationalitetMalsman}');";
+            } else {
+                // Eller uppdatera nationaliteten på en målsman.
+                // Om personen inte inte är målsman och heller inte ska bli målsman så finns inte personen i tabellen målsman och
+                // därför blir queryn bara ignorerad.
+                $query = "UPDATE {$tableMalsman} SET nationalitetMalsman = '{$nationalitetMalsman}' WHERE malsman_idPerson = '{$idPerson}';";
+            }
+            $dbAccess->SingleQuery($query);
         }
-        $dbAccess->SingleQuery($query);
     }
     
     // Elev
-    if (isset($formValues['delElev'])) {
-        // Radera en elev ur relationstabellen och elevtabellen.
-        $query = "DELETE FROM {$tableRelation} WHERE relation_idElev = '{$idPerson}';";
-        $dbAccess->SingleQuery($query);
-        $query = "DELETE FROM {$tableElev} WHERE elev_idPerson = '{$idPerson}';";
-        $dbAccess->SingleQuery($query);
-    } else {
-        $personnummerElev = $dbAccess->WashParameter(strip_tags($formValues['personnummer']));
-        $gruppElev        = $dbAccess->WashParameter(strip_tags($formValues['grupp']));
-        $nationalitetElev = $dbAccess->WashParameter(strip_tags($formValues['nat']));
-        $arskursElev      = $dbAccess->WashParameter(strip_tags($formValues['grade']));
-        $skolaElev        = $dbAccess->WashParameter(strip_tags($formValues['skola']));
-        $betaltElev       = $dbAccess->WashParameter(strip_tags($formValues['pay']));
-        if (isset($formValues['addElev'])) {
-            // Lägg till en elev.
-            $query = <<<QUERY
-INSERT INTO {$tableElev} (elev_idPerson, personnummerElev, gruppElev, nationalitetElev, arskursElev, skolaElev, betaltElev)
-    VALUES ('{$idPerson}', '{$personnummerElev}', '{$gruppElev}', '{$nationalitetElev}', '{$arskursElev}', '{$skolaElev}', '{$betaltElev}');
-QUERY;
+    if ($_SESSION['authorityUser'] == 'adm') { 
+        if (isset($formValues['delElev'])) {
+            // Radera en elev ur relationstabellen och elevtabellen.
+            $query = "DELETE FROM {$tableRelation} WHERE relation_idElev = '{$idPerson}';";
+            $dbAccess->SingleQuery($query);
+            $query = "DELETE FROM {$tableElev} WHERE elev_idPerson = '{$idPerson}';";
+            $dbAccess->SingleQuery($query);
         } else {
-            // Eller uppdatera en elev.
-            // Om personen inte inte är elev och heller inte ska bli elev så finns inte personen i tabellen elev och
-            // därför blir queryn bara ignorerad.
-            $query = <<<QUERY
-UPDATE {$tableElev} SET 
-    personnummerElev = '{$personnummerElev}',
-    gruppElev = '{$gruppElev}',
-    nationalitetElev = '{$nationalitetElev}',
-    arskursElev = '{$arskursElev}',
-    skolaElev = '{$skolaElev}',
-    betaltElev = '{$betaltElev}'
-    WHERE elev_idPerson = '{$idPerson}';
-QUERY;
+            $personnummerElev = $dbAccess->WashParameter(strip_tags($formValues['personnummer']));
+            $gruppElev        = $dbAccess->WashParameter(strip_tags($formValues['grupp']));
+            $nationalitetElev = $dbAccess->WashParameter(strip_tags($formValues['nat']));
+            $arskursElev      = $dbAccess->WashParameter(strip_tags($formValues['grade']));
+            $skolaElev        = $dbAccess->WashParameter(strip_tags($formValues['skola']));
+            $betaltElev       = $dbAccess->WashParameter(strip_tags($formValues['pay']));
+            if (isset($formValues['addElev'])) {
+                // Lägg till en elev.
+                $query = "INSERT INTO {$tableElev} (elev_idPerson, personnummerElev, gruppElev, nationalitetElev, 
+                            arskursElev, skolaElev, betaltElev)
+                            VALUES ('{$idPerson}', '{$personnummerElev}', '{$gruppElev}', '{$nationalitetElev}', 
+                            '{$arskursElev}', '{$skolaElev}', '{$betaltElev}');";
+            } else {
+                // Eller uppdatera en elev.
+                // Om personen inte inte är elev och heller inte ska bli elev så finns inte personen i tabellen elev och
+                // därför blir queryn bara ignorerad.
+                $query = "UPDATE {$tableElev} SET 
+                            personnummerElev = '{$personnummerElev}',
+                            gruppElev = '{$gruppElev}',
+                            nationalitetElev = '{$nationalitetElev}',
+                            arskursElev = '{$arskursElev}',
+                            skolaElev = '{$skolaElev}',
+                            betaltElev = '{$betaltElev}'
+                            WHERE elev_idPerson = '{$idPerson}';";
+            }
+            $dbAccess->SingleQuery($query);
         }
-        $dbAccess->SingleQuery($query);
     }
     
     // Radera målsman för elev.
@@ -446,8 +451,10 @@ QUERY;
     }
 
     // Bostad.
+    
+    // Undersök om personen ska bo i samma bostad som någon annan.
+    $sammaBostadSom = "";
     if (isset($formValues['sammaBostadSomAnnan'])) $sammaBostadSom = $formValues['sammaBostadSomAnnan'];
-    else $sammaBostadSom = "";
     if (isset($formValues['sammaBostadSomMalsman'])) {
         if ($formValues['sammaBostadSomMalsman'] == 'same') $sammaBostadSom = $newMalsman;
         else $sammaBostadSom = $formValues['sammaBostadSomMalsman'];
@@ -455,13 +462,26 @@ QUERY;
     
     if ($sammaBostadSom) {
         // Samma bostad som någon annan.
+        
+        // Vilken bostad bor den andre?
         $query = "SELECT person_idBostad FROM {$tablePerson} WHERE idPerson = '{$sammaBostadSom}';";
         $result = $dbAccess->SingleQuery($query);
         $row = $result->fetch_object();
         $idBostad = $row->person_idBostad;
         $result->close();
+        
+        // Uppdatera till den bostaden.
         $query = "UPDATE {$tablePerson} SET person_idBostad = '{$idBostad}' WHERE idPerson  = '{$idPerson}';";
         $dbAccess->SingleQuery($query);
+        
+        // Kontrollera om ingen annan bor i den gamla bostaden. I så fall ta bort den.
+        $gammalBostadId = $arrayPerson[8];
+        $query = "SELECT * FROM {$tablePerson} WHERE person_idBostad = {$gammalBostadId};";
+        if (!$dbAccess->SingleQuery($query)) {
+            $query = "DELETE FROM {$tableBostad} WHERE idBostad = '{$gammalBostadId}';";
+            $dbAccess->SingleQuery($query);
+        }
+        
     } else {
         // Uppdatera bostad.
         //Tvätta inparametrarna.
@@ -505,7 +525,7 @@ QUERY;
         $form->toggleFrozen(true);      // Frys formuläret inför ny visning.
         $mainTextHTML .= "<a title='Vidare' href='?p=show_user&amp;id={$idPerson}' tabindex='1'><img src='../images/b_enter.gif' alt='Vidare' /></a> <br />\n";
     } else { // Annars hoppa vidare.
-        header('Location: ' . WS_SITELINK . "?p=show_user&amp;id={$idPerson}");
+        header('Location: ' . WS_SITELINK . "?p=show_user&id={$idPerson}");
         exit;
     }
 }
@@ -520,7 +540,7 @@ $renderer = HTML_QuickForm2_Renderer::factory('default')
         'group_errors'  => true,
         'errors_prefix' => 'Följand information saknas eller är felaktigt ifylld:',
         'errors_suffix' => '',
-        'required_note' => ''
+        'required_note' => 'Obligatoriska fält är markerade med <em>*</em>'
     ))
     ->setTemplateForId('submit', '<div class="element">{element} or <a href="/">Cancel</a></div>')
     /*->setTemplateForClass(
