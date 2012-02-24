@@ -235,7 +235,7 @@ if ($_SESSION['authorityUser'] == 'adm') {
     }
 
     $fsElev->addElement('static', 'comment')
-                   ->setLabel('Målsman för eleven:');
+                   ->setLabel('Målsman för eleven');
 
     // Lista målsmän för eleven.
     if (isset($aMalsmanElev)) { 
@@ -257,7 +257,7 @@ if ($_SESSION['authorityUser'] == 'adm') {
     $result->close();
     $fsElev->addElement(
         'select', 'addMalsmanElev', array('multiple' => 'multiple', 'size' => 3),
-        array('options' => $malsmanList, 'label' => 'Välj en eller flera nya målsmän:<br /><small>Håll ner ctrl för flera</small>'));
+        array('options' => $malsmanList, 'label' => 'Välj en eller flera nya målsmän<br /><small>Håll ner ctrl för flera</small>'));
 }
 
 // Bostad
@@ -285,7 +285,7 @@ if ($_SESSION['authorityUser'] == 'adm') {
     }
     $result->close();
     $fsBostad->addElement(
-            'select', 'sammaBostadSomAnnan', null, array('options' => $bostadLista, 'label' => 'Samma bostad som:') );
+            'select', 'sammaBostadSomAnnan', null, array('options' => $bostadLista, 'label' => 'Samma bostad som') );
 }
 
 // Eller editera bostadsadress

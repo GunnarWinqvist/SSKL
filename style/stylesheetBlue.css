@@ -484,7 +484,7 @@ th {
     clear: both;
 }
 
-//.quickform form div.element { padding: 0.25em 0; }
+/*.quickform form div.element { padding: 0.25em 0; }*/
 .quickform div.element {
     display: inline;
     float: left;

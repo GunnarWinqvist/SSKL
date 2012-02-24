@@ -54,7 +54,7 @@ class CHTMLPage {
         <meta charset="{$charset}" />
         <title>{$siteTitle}</title>
         <link rel="shortcut icon" href="{$favicon}" />
-        <link rel="stylesheet" href="{$stylesheet}" />
+        <link rel="stylesheet" href="{$stylesheet}" type="text/css" />
         {$HTMLHead}
         <!-- HTML5 support for IE -->
         <!--<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>-->        
