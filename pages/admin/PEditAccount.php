@@ -26,7 +26,7 @@ $intFilter->UserIsAuthorisedOrDie('adm');         // Måste vara minst adm för at
 // Tag hand om inparametrar till sidan om det finns och bestäm vilken som är nästa sida.
 
 $idPerson = isset($_GET['id']) ? $_GET['id'] : NULL;
-if ($idPerson) $redirect = "show_user&amp;id=".$idPerson;
+if ($idPerson) $redirect = "show_user&id=".$idPerson;
 else           $redirect = "search_user";
 
 
