@@ -17,7 +17,7 @@ if (isset($_SESSION['idUser'])) {
 <div class='clear_button'>
 <a class='button' href='?p=logout' onclick="this.blur();"><span>Logga ut</span></a></div>
 <div class='clear_button'>
-<a class='button' href='?p=show_user&amp;id={$_SESSION['idUser']}' onclick="this.blur();"><span>Personuppgifter</span></a></div>
+<a class='button' href='?p=show_usr&amp;id={$_SESSION['idUser']}' onclick="this.blur();"><span>Personuppgifter</span></a></div>
 
 HTMLCode;
 
@@ -40,13 +40,13 @@ HTMLCode;
        $rightColumnHTML .= <<<HTMLCode
 <h3>Administratör</h3>
 <div class='clear_button'>
-<a class='button' href='?p=edit_account' onclick="this.blur();"><span>Lägg till ny användare</span></a></div>
+<a class='button' href='?p=edit_acnt' onclick="this.blur();"><span>Lägg till ny användare</span></a></div>
 <div class='clear_button'>
-<a class='button' href='?p=search_user' onclick="this.blur();"><span>Sök en person</span></a></div>
+<a class='button' href='?p=srch_usr' onclick="this.blur();"><span>Sök en person</span></a></div>
 <div class='clear_button'>
 <a class='button' href='?p=dump_db' onclick="this.blur();"><span>Dumpa databasen på fil</span></a></div>
 <p>Följande aktiviteter förstör databasen och går inte att backa!</p>
-<div class='clear_button'><a class='button' href='?p=install_db' 
+<div class='clear_button'><a class='button' href='?p=inst_db' 
     onclick="this.blur(); 
     return confirm('Vill du installera om databasen? Alla data blir förstörda och kan inte återskapas.');">
     <span>Ominstallera databasen</span></a></div>
@@ -64,7 +64,7 @@ HTMLCode;
     $redirect = $nextPage;
     $rightColumnHTML .= <<<HTMLCode
 <div class='login'>
-<form name='loginForm' action='?p=login_ex' method='post'>
+<form name='loginForm' action='?p=login' method='post'>
 <input type='hidden' name='redirect' value='{$redirect}' />
 <table>
 <tr><td><h3>Inloggning</h3></td></tr>
@@ -73,7 +73,7 @@ HTMLCode;
 <tr><td>Lösenord</td></tr>
 <tr><td><input type='password' name='password' size='20' maxlength='32' value='' /></td></tr>
 <tr><td><input type='image' title='Logga in' src='../images/b_login.gif' alt='Logga in' />
-<a title='Glömt?' href='?p=new_passw'><img src='../images/b_help.gif' alt='Glömt?' /></a>
+<a title='Glömt?' href='?p=new_pwd'><img src='../images/b_help.gif' alt='Glömt?' /></a>
 </td></tr>
 </table>
 </form>
@@ -117,7 +117,7 @@ if ($result) {
         if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
         list($idPost, $titelPost) = $row;
         $rightColumnHTML .= <<<HTMLCode
-<p><a href='?p=news#news{$idPost}'>{$titelPost}</a></p>
+<p><a href='?p=topics#news{$idPost}'>{$titelPost}</a></p>
 HTMLCode;
     }
     $result->close();

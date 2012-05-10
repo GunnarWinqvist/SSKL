@@ -1,47 +1,50 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// PEditAccount.php
-// Anropas med 'edit_account' från index.php.
-// Visar ett formulär för kontoinformation med användarnamn, lösenord och behörighet.
-// Formuläret genereras med QuickForm2, kontrollerar att allt är riktigt ifyllt och uppdaterar 
-// databasen.
-// 
-// Input: 'id' eller NULL
-// Output: 
-// 
+/**
+ * Edit account (edit_acnt)
+ *
+ * Visar ett formulär för kontoinformation med användarnamn, lösenord och 
+ * behörighet. Formuläret genereras med QuickForm2, kontrollerar att allt är 
+ * riktigt ifyllt och uppdaterar databasen.
+ * Input: 'id' eller NULL
+ */
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kolla behörighet med mera.
-
+/*
+ * Check if allowed to access.
+ * If $nextPage is not set, the page is not reached via the page controller.
+ * Then check if the viewer is signed in.
+ */
+if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 $intFilter = new CAccessControl();
-$intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRedirectToSignIn();
-$intFilter->UserIsAuthorisedOrDie('adm');         // Måste vara minst adm för att nå sidan.
+$intFilter->UserIsSignedInOrRedirect();
+$intFilter->UserIsAuthorisedOrDie('adm'); //Must be adm to access the page.
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Tag hand om inparametrar till sidan om det finns och bestäm vilken som är nästa sida.
-
+/*
+ * Handle input to the page.
+ */
 $idPerson = isset($_GET['id']) ? $_GET['id'] : NULL;
-if ($idPerson) $redirect = "show_user&id=".$idPerson;
-else           $redirect = "search_user";
+if ($idPerson) $redirect = "show_usr&id=".$idPerson;
+else           $redirect = "srch_usr";
+
+if ($debugEnable) $debug.="Input: id=".$idPerson." Authority = ".
+    $_SESSION['authorityUser']."<br />\r\n";
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Förbered databasen 
-
+/*
+ * Prepare the data base.
+ */
 $dbAccess       = new CdbAccess();
 $tablePerson    = DB_PREFIX . 'Person';
 $tableElev      = DB_PREFIX . 'Elev';
 $viewMalsman    = DB_PREFIX . 'ListaMalsman';
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Om $idPerson har ett värde så ska en användare editeras. Hämta då den nuvarande informationen ur 
-// databasen.
+/*
+ * Om $idPerson har ett värde så ska en användare editeras. Hämta då den 
+ * nuvarande informationen ur databasen.
+ */
 
 if ($idPerson) {
     $idPerson 		= $dbAccess->WashParameter($idPerson);
@@ -55,8 +58,9 @@ if ($idPerson) {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Skapa ett slumplösenord.
+/*
+ * Skapa ett slumplösenord.
+ */
 
 $min = 5;   // minimum length of password
 $max = 10;  // maximum length of password
@@ -72,14 +76,18 @@ for ( $i=0; $i<rand($min,$max); $i++ ) {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Generera formuläret med QuickForm2.
+/*
+ * Generera formuläret med QuickForm2.
+ */
 
 require_once 'HTML/QuickForm2.php';
 require_once 'HTML/QuickForm2/Renderer.php';
 
-$formAction = WS_SITELINK . "?p=edit_account&id=".$idPerson; // Pekar tillbaka på samma sida igen.
-$form       = new HTML_QuickForm2('account', 'post', array('action' => $formAction), array('name' => 'account'));
+// Peka tillbaka på samma sida igen.
+$formAction = WS_SITELINK . "?p=edit_acnt&id=".$idPerson; 
+$form       = new HTML_QuickForm2('account', 'post', 
+                array('action' => $formAction), 
+                array('name' => 'account'));
 
 // data source with default values:
 $form->addDataSource(new HTML_QuickForm2_DataSource_Array(array(
@@ -92,63 +100,77 @@ $form->addDataSource(new HTML_QuickForm2_DataSource_Array(array(
 $fsAccount = $form->addElement('fieldset')->setLabel('Användarkonto');
 
 // Användarnamn
-$accountPerson = $fsAccount->addElement(
-    'text', 'account', array('style' => 'width: 300px;'), array('label' => 'Användarnamn:') );
+$accountPerson = $fsAccount->addElement( 'text', 'account', 
+    array('style' => 'width: 300px;'), 
+    array('label' => 'Användarnamn:') );
 $accountPerson->addRule('required', 'Du måste ange ett användarnamn');
-$accountPerson->addRule('maxlength', 'Användarnamnet får inte vara längre än 20 tecken.', 20);
-$accountPerson->addRule('regex', 'Användarnamnet får bara innehålla bokstäver a-z, A-Z.', '/^[a-zA-Z]+$/');
+$accountPerson->addRule('maxlength', 
+    'Användarnamnet får inte vara längre än 20 tecken.', 20);
+$accountPerson->addRule('regex', 
+    'Användarnamnet får bara innehålla bokstäver a-z, A-Z.', '/^[a-zA-Z]+$/');
 
 // Lösenord
-//$oldPasswordPerson = $fsAccount->addElement('password', 'oldPasswordPerson', array('style' => 'width: 300px;'),
-//                                array('label' => 'Ditt gamla lösenord:'));
-$newPasswordPerson = $fsAccount->addElement('password', 'password', array('style' => 'width: 300px;'),
-                                array('label' => 'Lösenord:'));
-$passwordRep = $fsAccount->addElement('password', 'passwordRep', array('style' => 'width: 300px;'),
-                                array('label' => 'Lösenord igen:'));
+$newPasswordPerson = $fsAccount->addElement('password', 'password', 
+    array('style' => 'width: 300px;'),
+    array('label' => 'Lösenord:'));
+$passwordRep = $fsAccount->addElement('password', 'passwordRep', 
+    array('style' => 'width: 300px;'),
+    array('label' => 'Lösenord igen:'));
 
-//$oldPasswordPerson->addRule('required', 'Du måste ange ditt gamla lösenord.');
 $newPasswordPerson->addRule('required', 'Du måste ange ett lösenord.');
 $passwordRep      ->addRule('required', 'Du måste upprepa lösenordet.');
-$newPasswordPerson->addRule('minlength', 'Lösenordet måste innehålla minst 5 tecken.', 5);
-$newPasswordPerson->addRule('maxlength', 'Lösenordet får inte vara längre än 20 tecken.', 20);
-$newPasswordPerson->addRule('eq', 'Du har angett två olika lösenord.', $passwordRep);
+$newPasswordPerson->addRule('minlength', 
+    'Lösenordet måste innehålla minst 5 tecken.', 5);
+$newPasswordPerson->addRule('maxlength', 
+    'Lösenordet får inte vara längre än 20 tecken.', 20);
+$newPasswordPerson->addRule('eq', 'Du har angett två olika lösenord.', 
+    $passwordRep);
 
 
 // Skicka lösenord?
 $sendPassword = $fsAccount->addElement('checkbox', 'send', array('value' => '1'))
     ->setContent('Skicka lösenordet med mejl till användaren');
 $fsAccount->addElement('static', 'comment')
-               ->setContent('Det går för närvarande inte att skicka lösenordet till gmail-adresser. Om du har en gmail-adress 
-                    registrerad i föreningens register så måste du skicka en lösenordsförfrågan manuellt till 
-                        registrering@svenskaskolankualalumpur.com');
+    ->setContent('Det går för närvarande inte att skicka lösenordet till 
+        gmail-adresser. Om du har en gmail-adress registrerad i föreningens 
+        register så måste du skicka en lösenordsförfrågan manuellt till 
+        registrering@svenskaskolankualalumpur.com');
 
 
 // Behörighetsgrupp
 $fsAuthority = $form->addElement('fieldset')->setLabel('Behörighet');
 if ($arrayPerson[3] == "adm") {
-    $behorighetPerson = $fsAuthority->addElement('radio', 'authority', array('value' => 'usr'))
+    $behorighetPerson = $fsAuthority->addElement('radio', 'authority', 
+        array('value' => 'usr'))
         ->setContent('Vanlig användare');
-    $behorighetPerson = $fsAuthority->addElement('radio', 'authority', array('value' => 'adm', 'checked' => 'checked'))
+    $behorighetPerson = $fsAuthority->addElement('radio', 'authority', 
+        array('value' => 'adm', 'checked' => 'checked'))
         ->setContent('Administratör');
 } else {
-    $behorighetPerson = $fsAuthority->addElement('radio', 'authority', array('value' => 'usr', 'checked' => 'checked'))
+    $behorighetPerson = $fsAuthority->addElement('radio', 'authority', 
+        array('value' => 'usr', 'checked' => 'checked'))
         ->setContent('Vanlig användare');
-    $behorighetPerson = $fsAuthority->addElement('radio', 'authority', array('value' => 'adm'))
+    $behorighetPerson = $fsAuthority->addElement('radio', 'authority', 
+        array('value' => 'adm'))
         ->setContent('Administratör');
 }
 
 
 // Knappar
 $buttons = $form->addGroup('buttons')->setSeparator('&nbsp;');
-$buttons->addElement('image', 'submitButton', array('src' => '../images/b_enter.gif', 'title' => 'Spara'));
+$buttons->addElement('image', 'submitButton', 
+    array('src' => '../images/b_enter.gif', 'title' => 'Spara'));
 $buttons->addElement('static', 'resetButton')
-    ->setContent('<a title="Återställ" href="?p=edit_account&amp;id='.$idPerson.'" ><img src="../images/b_undo.gif" alt="Återställ" /></a>');
+    ->setContent('<a title="Återställ" href="?p=edit_acnt&amp;id='.$idPerson.'" >
+    <img src="../images/b_undo.gif" alt="Återställ" /></a>');
 $buttons->addElement('static', 'cancelButton')
-    ->setContent('<a title="Avbryt" href="?p='.$redirect.'" ><img src="../images/b_cancel.gif" alt="Avbryt" /></a>');
+    ->setContent('<a title="Avbryt" href="?p='.$redirect.'" >
+    <img src="../images/b_cancel.gif" alt="Avbryt" /></a>');
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Behandla informationen i formuläret.
+/*
+ * Behandla informationen i formuläret.
+ */
 
 // Ta bort 'space' först och sist på alla värden.
 $form->addRecursiveFilter('trim'); 
@@ -160,9 +182,12 @@ if ($form->validate()) {
     
     //Tvätta inparametrarna.
     $formValues       = $form->getValue();
-    $accountPerson 	  = $dbAccess->WashParameter(strip_tags($formValues['account']));
-    $behorighetPerson = $dbAccess->WashParameter(strip_tags($formValues['authority']));
-    $passwordPerson   = $dbAccess->WashParameter(strip_tags($formValues['password']));
+    $accountPerson 	  = $dbAccess->WashParameter(
+        strip_tags($formValues['account']));
+    $behorighetPerson = $dbAccess->WashParameter(
+        strip_tags($formValues['authority']));
+    $passwordPerson   = $dbAccess->WashParameter(
+        strip_tags($formValues['password']));
 
     if ($idPerson) { //Om användaren redan finns så uppdateras databasen.
         $query = <<<QUERY
@@ -180,17 +205,20 @@ QUERY;
     }
     $dbAccess->SingleQuery($query);
 
-    // Om $idPerson inte innehåller något är det en ny användare. Hämta då dennes id.
+    // Om $idPerson inte innehåller något är det en ny användare. 
+    // Hämta då dennes id.
     if (!$idPerson) {
         $idPerson = $dbAccess->LastId();
-        $redirect = "edit_user&id=".$idPerson;
+        $redirect = "edit_usr&id=".$idPerson;
     }
     if ($debugEnable) $debug .= "idPerson: " . $idPerson . "<br /> \n";
 
     // Skicka lösenordet i mejl om detta är begärt.
     if (isset($formValues['send'])) {
         // Hämta mejladress. från personen eller dess målsman.
-        $query = "SELECT ePostPerson FROM {$tablePerson} WHERE idPerson = '{$idPerson}';";
+        $query = "
+            SELECT ePostPerson FROM {$tablePerson} 
+            WHERE idPerson = '{$idPerson}';";
         $result = $dbAccess->SingleQuery($query);
         $row = $result->fetch_object();
         $result->close();
@@ -231,9 +259,12 @@ Du kan själv logga in och ändra ditt lösenord.
 
 Text;
             mail( $eMailAdr, $subject, $text, $headers);
-            if ($debugEnable) $debug .= "Mail to: ".$eMailAdr." Subj: ".$subject." Headers: ".$headers."<br /> \n";
+            if ($debugEnable) $debug.="Mail to: ".$eMailAdr." Subj: ".$subject
+                ." Headers: ".$headers."<br /> \n";
         } else { // Om vi inte har hittat någon adress.
-            $_SESSION['errorMessage'] = "Det finns ingen mejladress att skicka lösenordet till i databasen!";
+            $_SESSION['errorMessage'] = 
+                "Det finns ingen mejladress att skicka lösenordet till i 
+                databasen!";
         }
     }
     
@@ -241,7 +272,8 @@ Text;
     if ($debugEnable) {
         $form->removeChild($buttons);   // Tag bort knapparna.
         $form->toggleFrozen(true);      // Frys formuläret inför ny visning.
-        $mainTextHTML .= "<a title='Vidare' href='?p={$redirect}'><img src='../images/b_enter.gif' alt='Vidare' /></a> <br />\n";
+        $mainTextHTML .= "<a title='Vidare' href='?p={$redirect}'>
+            <img src='../images/b_enter.gif' alt='Vidare' /></a> <br />\n";
 
     } else {
         header('Location: ' . WS_SITELINK . "?p={$redirect}");
@@ -250,8 +282,9 @@ Text;
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Om formuläret inte är riktigt ifyllt så skrivs det ut igen med kommentarer.
+/*
+ * Om formuläret inte är riktigt ifyllt så skrivs det ut igen med kommentarer.
+ */
 
 $renderer = HTML_QuickForm2_Renderer::factory('default')
     ->setOption(array(
@@ -261,21 +294,16 @@ $renderer = HTML_QuickForm2_Renderer::factory('default')
         'errors_suffix' => '',
         'required_note' => 'Obligatoriska fält är markerade med <em>*</em>'
     ))
-    ->setTemplateForId('submit', '<div class="element">{element} or <a href="/">Cancel</a></div>')
-/*    ->setTemplateForClass(
-        'HTML_QuickForm2_Element_Input',
-        '<div class="element<qf:error> error</qf:error>"><qf:error>{error}</qf:error>' .
-        '<label for="{id}" class="qf-label<qf:required> required</qf:required>">{label}</label>' .
-        '{element}' .
-        '<qf:label_2><div class="qf-label-1">{label_2}</div></qf:label_2></div>' 
-    )*/;
-
+    ->setTemplateForId('submit', '<div class="element">{element} or 
+        <a href="/">Cancel</a></div>')
+;
 $form->render($renderer);
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Bygg upp sidan
-
+/*
+ * Define everything that shall be on the page, generate the left column
+ * and then display the page.
+ */
 $page = new CHTMLPage(); 
 $pageTitle = "Editera användarkonto";
 
@@ -287,7 +315,7 @@ HTMLCode;
 
 $mainTextHTML .= $renderer;
 
-require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); 
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 ?>

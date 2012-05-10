@@ -2,51 +2,45 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// PLogout.php
-// Anropas med 'logout' från index.php.
-// Sidan genomför en utloggning.
-// Från denna sida kommer man till PLogin.php.
+// PLogout.php (logout)
+// 
+// This page performes a logout from the session, regenerates a session and send you to redirect.
+// Input: 'redirect'
 // 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kolla behörighet med mera.
+// Check that the page is reached from the front controller.
 //
-$intFilter = new CAccessControl();
-$intFilter->FrontControllerIsVisitedOrDie();
+if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Döda sessionen.
-//
-$hitCounter = $_SESSION["hitCounter"]; //Spara hitCounter innan vi dödar sessionen.
-require_once(TP_SOURCEPATH . 'FDestroySession.php');
+// Kill the session.
 
-// Starta en session och återställ hitCounter så att inte besökaren räknas dubbelt.
+// Save hitCounter before we kill the session.
+if (WS_HITCOUNTER) $hitCounter = $_SESSION["hitCounter"]; 
+require_once(TP_SOURCE . 'FDestroySession.php');
+
+// Start a new session and reinitiate hitCounter so that a visitor isn't counted doubble.
 session_start();
 session_regenerate_id();
-$_SESSION["hitCounter"] = $hitCounter;
+if (WS_HITCOUNTER) $_SESSION["hitCounter"] = $hitCounter;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Redirect to another page
-//
+// Redirect to another page if set.
+$redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'main';
 
-// Testar en ny variant. $redirect sätts till den sidan som skickade till logout.
-//$redirect = $_SERVER['HTTP_REFERER'];
-$redirect = "main";
-
-// Om i debugmode så visa och avbryt innan redirect.
+// If in debug mode show debug and then exit before redirect.
 if ($debugEnable) {
-    echo "<p>Logout genomförd.</p>";
-    echo "<a title='Vidare' href='?p={$redirect}'>Vidare</a> <br />\n";
+    echo "<p>Logout performed.</p>";
+    echo $debug;
+    echo "<a title='Continue' href='?p={$redirect}'>Continue</a> <br />\n";
     exit();
 }
 
-// $redirect sätts i .
-//$redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'login';
 header('Location: ' . WS_SITELINK . "?p={$redirect}");
-//header('Location: ' . $redirect);
 exit;
 
 ?>

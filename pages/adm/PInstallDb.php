@@ -1,36 +1,41 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// InstallDb.php
-// Anropas med 'install_db' från index.php.
-// Initierar databasen, skapar alla tabeller och fyller den med nödvändig startinformation.
-// Endast användare som hör till grupp adm har tillgång till sidan.
-//
-// Första gången man initerar databasen och således inte kan vara inloggad sätter man 
-// kommentarsstreck (//) framför inloggningskraven nedan. Adressera sedan sidan direkt med 
-// svenskaskolankualalumpur.com/?p=install_db.
-// Vid första initieringen av databasen måste även en uranvändare initieras. Det görs genom att ta 
-// bort kommentarsstrecken vid rad 136 och 137 nedan. 
-// Efter det kan man logga in som Admin (password admin). Ändra lösenordet omedelbart efter inloggning 
-// och glöm inte att spara filen igen när du har återställt kommentarmarkeringarna enligt ovan.
-// 
-// Om du gör ändringar i databasstrukturen så glöm inte att motsvarande ändringar också måste göras 
-// i PFillDb.php.
+/**
+ * Installera databasen (install_db)
+ *
+ * Initierar databasen, skapar alla tabeller och fyller den med nödvändig 
+ * startinformation. Endast användare som hör till grupp adm har tillgång till 
+ * sidan.
+ * 
+ * Första gången man initerar databasen och således inte kan vara inloggad 
+ * sätter man kommentarsstreck (//) framför inloggningskraven nedan. Adressera 
+ * sedan sidan direkt med svenskaskolankualalumpur.com/?p=install_db.
+ * Vid första initieringen av databasen måste även en uranvändare initieras. 
+ * Det görs genom att ta  bort kommentarsstrecken vid rad 136 och 137 nedan. 
+ * Efter det kan man logga in som Admin (password admin). Ändra lösenordet 
+ * omedelbart efter inloggning och glöm inte att spara filen igen när du har 
+ * återställt kommentarmarkeringarna enligt ovan.
+ * 
+ * Om du gör ändringar i databasstrukturen så glöm inte att motsvarande ändringar 
+ * också måste göras i PFillDb.php.
+ *
+ */
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kolla behörighet med mera.
-//
+/*
+ * Check if allowed to access.
+ * If $nextPage is not set, the page is not reached via the page controller.
+ * Then check if the viewer is signed in.
+ */
+if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 $intFilter = new CAccessControl();
-$intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRedirectToSignIn(); //Kommentera bort med // första databasinitieringen.
-$intFilter->UserIsAuthorisedOrDie('adm');       // Måste vara minst admin för att nå sidan.
+$intFilter->UserIsSignedInOrRedirect();
+$intFilter->UserIsAuthorisedOrDie('adm'); //Must be adm to access the page.
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Förbered och genomför en SQL query för att skapa tabeller etc i databasen 'forum'.
-//
+/*
+ * Initiate the DB.
+ */
 $dbAccess               = new CdbAccess();
 $tablePerson            = DB_PREFIX . 'Person';
 $tableBostad            = DB_PREFIX . 'Bostad';
@@ -41,7 +46,9 @@ $tableRelation          = DB_PREFIX . 'Relation';
 $tableBlogg             = DB_PREFIX . 'Blogg';
 $viewMalsman            = DB_PREFIX . 'ListaMalsman';
 
-$totalStatements = 16; //Måste uppdateras manuellt om antalet statements ändras.
+// $totalStatements must be edited manually. Count the statements in the
+// query below and enter the number here. Only used for debug help.
+$totalStatements = 17;
 $query = <<<QUERY
 
 -- Tag bort tabellerna om de redan finns.
@@ -119,12 +126,12 @@ CREATE TABLE {$tableRelation} (
 );
 
 -- View för att lättare visa målsmän i tabell.
-CREATE VIEW {$viewMalsman} (idElev, idMalsman, fornamnMalsman, efternamnMalsman, ePostMalsman, mobilMalsman,
-                nationalitetMalsman, personnummerMalsman)
-    AS SELECT relation_idElev, relation_idMalsman, fornamnPerson, efternamnPerson, ePostPerson, mobilPerson,
-                nationalitetMalsman, personnummerMalsman
-    FROM (({$tablePerson} JOIN {$tableMalsman} ON idPerson = malsman_idPerson)
-    JOIN {$tableRelation} ON idPerson = relation_idMalsman
+CREATE VIEW {$viewMalsman} (idElev, idMalsman, fornamnMalsman, efternamnMalsman, 
+    ePostMalsman, mobilMalsman, nationalitetMalsman, personnummerMalsman)
+AS SELECT relation_idElev, relation_idMalsman, fornamnPerson, efternamnPerson, 
+    ePostPerson, mobilPerson, nationalitetMalsman, personnummerMalsman
+FROM (({$tablePerson} JOIN {$tableMalsman} ON idPerson = malsman_idPerson)
+JOIN {$tableRelation} ON idPerson = relation_idMalsman
 );
 
 -- Tabell för poster i bloggen.
@@ -138,8 +145,10 @@ CREATE TABLE {$tableBlogg} (
     internPost          BOOLEAN
 );
 
--- Lägg till administratör för att kunna administrera databasen första gången den installeras.
--- Första gången måste kommentarsstrecken på de två raderna som börjar med INSERT och VALUES nedan tas bort.
+-- Lägg till administratör för att kunna administrera databasen första 
+-- gången den installeras.
+-- Första gången måste kommentarsstrecken på de två raderna som börjar med 
+-- INSERT och VALUES nedan tas bort.
 -- Password måste ändras direkt för att ingen ska kunna kapa databasen.
 -- INSERT INTO {$tablePerson} (accountPerson, passwordPerson, behorighetPerson)
 -- VALUES ('admin', md5('admin'), 'adm');
@@ -147,15 +156,16 @@ CREATE TABLE {$tableBlogg} (
 
 QUERY;
 
-// In med alltihop i databasen med en multiquery.
+// Enter into the DB with a multy query.
 $statements = $dbAccess->MultiQueryNoResultSet($query);
-if ($debugEnable) $debug .= "{$statements} statements av {$totalStatements} kördes.<br /> \n"; 
+if ($debugEnable) $debug.=$statements." statements of ".$totalStatements.
+    " was executed.<br />\r\n"; 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Bygg upp sidan
-//
+/*
+ * Define everything that shall be on the page, generate the left column
+ * and then display the page.
+ */
 $page = new CHTMLPage(); 
 $pageTitle = "Installera databas";
 
@@ -163,9 +173,10 @@ $mainTextHTML = <<<HTMLCode
 <p>Databasen har initierats med följande query:</p>
 <code>{$query}</code>
 <p>{$statements} statements av {$totalStatements} kördes.</p>
+
 HTMLCode;
 
-require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); 
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 ?>

@@ -10,13 +10,15 @@
 // 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kolla behörighet med mera.
-
+/*
+ * Check if allowed to access.
+ * If $nextPage is not set, the page is not reached via the page controller.
+ * Then check if the viewer is signed in.
+ */
+if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 $intFilter = new CAccessControl();
-$intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRedirectToSignIn();   // Måste vara inloggad för att nå sidan.
-$intFilter->UserIsAuthorisedOrDie('fnk');         // Måste vara minst funktionär för att nå sidan.
+$intFilter->UserIsSignedInOrRedirect();
+$intFilter->UserIsAuthorisedOrDie('fnk'); 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +59,7 @@ if (is_uploaded_file( $_FILES['file']['tmp_name'] )) {
     if (!$extension)
         $mainTextHTML .= "<p>Du kan bara ladda upp filer av typerna .pdf, .doc eller .xls</p>";
     else {
-        $result = move_uploaded_file($_FILES['file']['tmp_name'], TP_DOCUMENTSPATH."/".$filename.$extension);
+        $result = move_uploaded_file($_FILES['file']['tmp_name'], TP_DOCUMENTS."/".$filename.$extension);
         
         if ($result == 1) {
             // Om det gick bra så hoppa tillbaka till doc.
@@ -76,7 +78,7 @@ $mainTextHTML .= "<a href='?p=doc'>Tillbaka</a>";
 // Skriv ut sidan.
 
 $page = new CHTMLPage(); 
-$pageTitle = "Template";
+$pageTitle = "Document upload";
 
 require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
 

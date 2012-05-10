@@ -1,43 +1,27 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// PShowUser.php
-// Anropas med 'show_user' från index.php.
-// Sidan visar all information från registret om en person utom lösenordet.
-// Input: id
-// Output: 
-// 
+/**
+ * Show user (show_usr)
+ *
+ * Sidan visar all information från registret om en person utom lösenordet.
+ * Input: id
+ *
+ */
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kolla behörighet med mera.
-
+/*
+ * Check if allowed to access.
+ * If $nextPage is not set, the page is not reached via the page controller.
+ * Then check if the viewer is signed in.
+ */
+if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 $intFilter = new CAccessControl();
-$intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRedirectToSignIn();
+$intFilter->UserIsSignedInOrRedirect();
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Tag hand om inparametrar till sidan.
-
-$idPerson = isset($_GET['id']) ? $_GET['id'] : NULL;
-if ($debugEnable) $debug .= "Input: id=" . $idPerson . "<br /> \n";
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kontrollera om personen har behörighet till sidan, d v s är personen på sidan, målsman till
-// personen på sidan eller adm.
-
-$showPage = FALSE;
-if ($idPerson == $_SESSION['idUser']) $showPage = TRUE;
-if ($_SESSION['authorityUser'] == "adm") $showPage = TRUE;
-// Målsman kontrolleras på elevdelen längre ner.
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa all information om personen 'idPerson'.
-//
+/*
+ * Prepare the database.
+ */
 $dbAccess           = new CdbAccess();
 $tablePerson        = DB_PREFIX . 'Person';
 $tableBostad        = DB_PREFIX . 'Bostad';
@@ -45,13 +29,38 @@ $tableFunktionar    = DB_PREFIX . 'Funktionar';
 $tableElev          = DB_PREFIX . 'Elev';
 $tableMalsman       = DB_PREFIX . 'Malsman';
 $tableRelation      = DB_PREFIX . 'Relation';
-$idPerson 		    = $dbAccess->WashParameter($idPerson);
+
+
+/*
+ * Handle input to the page.
+ */
+$idPerson = isset($_GET['id']) ? $_GET['id'] : NULL;
+$idPerson = $dbAccess->WashParameter($idPerson);
+if ($debugEnable) $debug.="Input: id=".$idPerson." Authority = ".
+    $_SESSION['authorityUser']."<br />\r\n";
+
+
+/*
+ * Kontrollera om personen har behörighet till sidan, d v s är personen på 
+ * sidan, målsman till personen på sidan eller adm.
+ */
+
+$showPage = FALSE;
+if ($idPerson == $_SESSION['idUser']) $showPage = TRUE;
+if ($_SESSION['authorityUser'] == "adm") $showPage = TRUE;
+// Målsman kontrolleras på elevdelen längre ner.
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Visa all information om personen 'idPerson'.
+//
     
 // Query för all information i alla aktuella tabeller.
 $totalStatements = 4;
 $query = <<<QUERY
-SELECT * FROM ({$tablePerson} LEFT OUTER JOIN {$tableBostad} ON person_idBostad = idBostad)
-   WHERE idPerson = {$idPerson};
+SELECT * FROM ({$tablePerson} LEFT OUTER JOIN {$tableBostad} 
+    ON person_idBostad = idBostad)
+    WHERE idPerson = {$idPerson};
 SELECT * FROM {$tableFunktionar} WHERE funktionar_idPerson = {$idPerson};
 SELECT * FROM {$tableElev}       WHERE elev_idPerson       = {$idPerson};
 SELECT * FROM {$tableMalsman}    WHERE malsman_idPerson    = {$idPerson};
@@ -59,14 +68,15 @@ QUERY;
 
 // Multiquery som returnerar en array med resultatset.
 $statements = $dbAccess->MultiQuery($query, $arrayResult); 
-if ($debugEnable) $debug .= "{$statements} statements av {$totalStatements} kördes.<br /> \n"; 
+if ($debugEnable) 
+    $debug.=$statements." statements av ".$totalStatements." kördes.<br />\r\n"; 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Visa all information om användaren.
 
 $arrayPerson     = $arrayResult[0]->fetch_row(); $arrayResult[0]->close();
-if ($debugEnable) $debug .= "Person = ".print_r($arrayPerson, TRUE)."<br /> \n";
+if ($debugEnable) $debug .= "Person = ".print_r($arrayPerson, TRUE)."<br />\r\n";
 $mainTextHTML = <<<HTMLCode
 <div class='name'>{$arrayPerson[4]} {$arrayPerson[5]}</div>
 <div class='admin'>
@@ -81,7 +91,7 @@ $mainTextHTML = <<<HTMLCode
 </table>
 HTMLCode;
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Om personen är knuten till en bostad.
 if ($arrayPerson[8]) { 
     $mainTextHTML .= <<<HTMLCode
@@ -97,10 +107,10 @@ if ($arrayPerson[8]) {
 HTMLCode;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Om personen är elev lägger vi till elevinformation.
 $arrayElev = $arrayResult[2]->fetch_row(); $arrayResult[2]->close();
-if ($debugEnable) $debug .= "Elev = ".print_r($arrayElev, TRUE)."<br /> \n";
+if ($debugEnable) $debug .= "Elev = ".print_r($arrayElev, TRUE)."<br />\r\n";
 if ($arrayElev[0]) { 
     $mainTextHTML .= <<<HTMLCode
 <h3>Elev</h3>
@@ -123,11 +133,14 @@ WHERE relation_idElev = {$idPerson};
 QUERY;
     if ($result = $dbAccess->SingleQuery($query)) {
         while($row = $result->fetch_row()) {
-            if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
+            if ($debugEnable) 
+                $debug .= "Query result: ".print_r($row, TRUE)."<br />\r\n";
             list($idMalsman, $fornamnMalsman, $efternamnMalsman) = $row;
-            if ($idMalsman == $_SESSION['idUser']) $showPage = TRUE; //Behörighet till sidan som målsman.
+            if ($idMalsman == $_SESSION['idUser']) 
+                $showPage = TRUE; //Behörighet till sidan som målsman.
             $mainTextHTML .= <<<HTMLCode
-<tr><td>Målsman</td><td><a href='?p=show_user&amp;id={$idMalsman}'>{$fornamnMalsman} {$efternamnMalsman}</a></td></tr>
+<tr><td>Målsman</td><td><a href='?p=show_usr&amp;id={$idMalsman}'>
+    {$fornamnMalsman} {$efternamnMalsman}</a></td></tr>
 HTMLCode;
         }
         $result->close();
@@ -135,7 +148,7 @@ HTMLCode;
     $mainTextHTML .= "</table>";
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Om personen är funktionär lägger vi till detta.
 
 if ($row = $arrayResult[1]->fetch_object()) { 
@@ -152,7 +165,7 @@ HTMLCode;
 }
 $arrayResult[1]->close();
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Om personen är målsman lägger vi till detta.
 $arrayMalsman    = $arrayResult[3]->fetch_row(); $arrayResult[3]->close();
 
@@ -173,10 +186,12 @@ WHERE relation_idMalsman = {$idPerson};
 QUERY;
     if ($result = $dbAccess->SingleQuery($query)) {
         while($row = $result->fetch_row()) {
-            if ($debugEnable) $debug .= "Query result: ".print_r($row, TRUE)."<br /> \n";
+            if ($debugEnable) 
+                $debug .= "Query result: ".print_r($row, TRUE)."<br />\r\n";
             list($idElev, $fornamnElev, $efternamnElev) = $row;
             $mainTextHTML .= <<<HTMLCode
-<tr><td>Målsman för</td><td><a href='?p=show_user&amp;id={$idElev}'>{$fornamnElev} {$efternamnElev}</a></td></tr>
+<tr><td>Målsman för</td><td><a href='?p=show_usr&amp;id={$idElev}'>
+    {$fornamnElev} {$efternamnElev}</a></td></tr>
 HTMLCode;
         }
         $result->close();
@@ -190,39 +205,46 @@ HTMLCode;
 $mainTextHTML .= "</div> <!-- End Admin --> \n <br /> \n";
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Lägg till knappar för editering och ändra lösenord. Olika för admin.
 if ($_SESSION['authorityUser'] == "adm") {
     $mainTextHTML .= <<<HTMLCode
-<a title='Editera' href='?p=edit_user&amp;id={$idPerson}' tabindex='1'><img src='../images/b_edit.gif' alt='Editera' /></a>
-<a title='Ändra lösenord' href='?p=edit_account&amp;id={$idPerson}'><img src='../images/b_password.gif' alt='Ändra lösenord' /></a>
-<a title='Radera' href='?p=del_account&amp;id={$idPerson}' onclick="return confirm('Vill du radera användaren ur databasen?');">
-            <img src='../images/b_delete.gif' alt='Radera' /></a>
+<a title='Editera' href='?p=edit_usr&amp;id={$idPerson}' tabindex='1'>
+    <img src='../images/b_edit.gif' alt='Editera' /></a>
+<a title='Ändra lösenord' href='?p=edit_acnt&amp;id={$idPerson}'>
+    <img src='../images/b_password.gif' alt='Ändra lösenord' /></a>
+<a title='Radera' href='?p=del_acnt&amp;id={$idPerson}' 
+    onclick="return confirm('Vill du radera användaren ur databasen?');">
+    <img src='../images/b_delete.gif' alt='Radera' /></a>
 HTMLCode;
 
 } else {
     $mainTextHTML .= <<<HTMLCode
-<a title='Editera' href='?p=edit_user&amp;id={$idPerson}' tabindex='1'><img src='../images/b_edit.gif' alt='Editera' /></a>
-<a title='Ändra lösenord' href='?p=edit_passw&amp;id={$idPerson}'><img src='../images/b_password.gif' alt='Ändra lösenord' /></a>
+<a title='Editera' href='?p=edit_usr&amp;id={$idPerson}' 
+    tabindex='1'><img src='../images/b_edit.gif' alt='Editera' /></a>
+<a title='Ändra lösenord' href='?p=edit_pwd&amp;id={$idPerson}'>
+    <img src='../images/b_password.gif' alt='Ändra lösenord' /></a>
 HTMLCode;
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Om sidan inte får visas avbryt och visa felmeddelande.
 if (!$showPage) {
-    $message = "Får att få se personuppgifter måste det vara för dig själv eller ett barn till dig.";
+    $message = "Får att få se personuppgifter måste det vara för dig själv 
+        eller ett barn till dig.";
     require(TP_PAGESPATH . 'login/PNoAccess.php');
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa sidan
-
+/*
+ * Define everything that shall be on the page, generate the left column
+ * and then display the page.
+ */
 $page = new CHTMLPage(); 
 $pageTitle = "Visa person";
 
-require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); 
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 

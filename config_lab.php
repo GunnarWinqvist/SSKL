@@ -44,7 +44,7 @@ define('WS_HITCOUNTER',     TRUE);
 /**
  * Website server type.
  */
-define('WS_TYPE', 	'unix');
+define('WS_TYPE', 	'windows');
 
 /**
  * Name for the website.
@@ -100,22 +100,22 @@ define('WS_FLOATINGDESIGN', TRUE);
 /**
  * Link to site.
  */
-define('WS_SITELINK',   'http://svenskaskolankualalumpur.com/');
+define('WS_SITELINK',   'http://localhost/');	
 
 /**
  * Mail address to the site.
  */
-define('WS_SITEMAIL',   'webmaster@svenskaskolankualalumpur.com');
+
 
 /**
  * Correct mailserver for outgoing mail.
  */
-ini_set( "SMTP", "mailout.one.com" );
+
 
 /**
  * Correct port for outgoing mail.
  */
-ini_set( "SMTP_port", "21" );
+
 
 
 /******************************************************************************
@@ -145,22 +145,22 @@ define('WS_MENU', serialize($menuElements));
 /**
  * Host name for the MySQL database.
  */
-define('DB_HOSTNAME', 'svenskaskolankualalumpur.com.mysql');
+define('DB_HOSTNAME', 'localhost');
 
 /**
  * Name of the database.
  */
-define('DB_DATABASE', 'svenskaskolanku');
+define('DB_DATABASE', 'svenskaskolan');
 
 /**
  * User name for the database.
  */
-define('DB_USERNAME', 'svenskaskolanku');
+define('DB_USERNAME', 'Gunnar');
 
 /**
  * Password for the database is stored in a separate file.
  */
-require_once('password.php');
+define('DB_PASSWORD', 'passord');
 
 /**
  * Prefix to be able to use several DBs on the same DB server.
@@ -217,7 +217,6 @@ define('TP_PICTURES',   dirname(__FILE__) . $pd.'picture_archive'.$pd);
 /**
  * Path to the PEAR library if locally installed.
  */
-set_include_path(dirname(__FILE__).'/pear/PEAR/');
 
 
 /******************************************************************************

@@ -1,111 +1,119 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// index.php
-// Detta är en Frontcontroller. Alla sidbyten sker via denna sida.
-// Inparametern ?p= anger vilken sida som ska visas.
-// T ex www.template.se/?p=main
-// Det enda du har anledning att ändra på denna sida är listan längst ner.
-//
+/**
+ * Frontcontroller. 
+ * 
+ * All page access is done through this page.
+ * The input parameter p states which page that shall be visited.
+ */
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Filer och parametrar som är gemensamma för alla sidor på siten.
-//
+/**
+ * Load all parameters that is common for this web site.
+ * If the code is running on a lab environment set $labEnvironment = TRUE.
+ * If the code is running on a web server environment set $labEnvironment = FALSE.
+ */
+$labEnvironment = TRUE;
+if ($labEnvironment)
+    require_once('config_lab.php');
+else
+    require_once('config.php');
+
+
+/**
+ * Start a new session.
+ */
 session_start();
-require_once('config.php');
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Uppdatera besöksräknaren om det är en ny gäst.
-//
-$hitCounter = implode("",file("counter.txt")); //Hämta räknarvärdet ur filen counter.txt.
-if(!isset($_SESSION["hitCounter"])) { //Om det är den första sidan i en ny session.
-    $hitCounter++; //Öka med 1.
+/**
+ * Uppdate hit counter if it is a new visitor.
+ */
+// Get the old counter value from the file counter.txt
+$hitCounter = implode("",file("counter.txt")); 
+if(!isset($_SESSION["hitCounter"])) { 
+    // If it's the first page in a new session.
+    $hitCounter++; 
     $fh = fopen('counter.txt', 'w');
-    fwrite($fh, $hitCounter); //Skriv in det nya värdet i counter.txt.
+    fwrite($fh, $hitCounter); 
     fclose($fh);
 }
 $_SESSION["hitCounter"] = str_pad($hitCounter, 5, "0", STR_PAD_LEFT);
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Felhantering på eller av. Styrs av config.php
-//
+
+/**
+ * Error handling on/off. If in debug mode $debug will start to grov a string
+ * throughout execution and will be shown at the bottom of a page. 
+ */
 $debug = "";
 $debugEnable = WS_DEBUG;
 if ($debugEnable) error_reporting(E_ALL | E_STRICT);
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Startar en timer som kan visa hur lång tid det tog att få upp sidan. Styrs av config.php
-//
+/**
+ * Start a timer to time the generation of this page (excluding config.php).
+ */
 if(WS_TIMER) {
 	$gTimerStart = microtime(TRUE);
 }
- 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Möjliggör autoload för alla klassfiler.
-//
+
+
+/**
+ * Enable autoload for classes.
+ */
 function __autoload($class_name) {
-    require_once(TP_SOURCEPATH . $class_name . '.php');
+    require_once(TP_SOURCE . $class_name . '.php');
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Input till sidan är 'p'.
-//
+/*
+ * Input to the page is 'p'. Require the correct page.
+ */
 $nextPage = isset($_GET['p']) ? $_GET['p'] : 'main';
 if (WS_WORK) $nextPage = 'work';
 if ($debugEnable) $debug .= "nextPage = " . $nextPage . "<br /> \n";
 
-
-// Visa den efterfrågade sidan.
 switch($nextPage) {	
 
-    // Allmäna sidor
-    case 'main':        require_once(TP_PAGESPATH . 'PMain.php');               break;
-    case 'links':       require_once(TP_PAGESPATH . 'PLinks.php');              break;
-    case 'map':         require_once(TP_PAGESPATH . 'PMap.php');                break;
-    case 'contact':     require_once(TP_PAGESPATH . 'PContact.php');            break;
-    case 'topics':      require_once(TP_PAGESPATH . 'PTopics.php');             break;
-    case 'lists':       require_once(TP_PAGESPATH . 'PLists.php');              break;
-    case 'lists_ex':    require_once(TP_PAGESPATH . 'PListsEx.php');            break;
-    case 'doc':         require_once(TP_PAGESPATH . 'PDocuments.php');          break;
-    case 'doc_upload':  require_once(TP_PAGESPATH . 'PDocumentUpload.php');     break;
-    case 'appl':        require_once(TP_PAGESPATH . 'PApplication.php');        break;
+    // Open pages
+    case 'main':      require_once(TP_PAGES . 'PMain.php');          break;
+    case 'links':     require_once(TP_PAGES . 'PLinks.php');         break;
+    case 'map':       require_once(TP_PAGES . 'PMap.php');           break;
+    case 'contact':   require_once(TP_PAGES . 'PContact.php');       break;
+    case 'topics':    require_once(TP_PAGES . 'PTopics.php');        break;
+    case 'appl':      require_once(TP_PAGES . 'PApplication.php');   break;
 
+    // Member pages
+    case 'lists':     require_once(TP_PAGES . 'PLists.php');         break;
+    case 'lists_ex':  require_once(TP_PAGES . 'PListsEx.php');       break;
+    case 'doc':       require_once(TP_PAGES . 'PDocs.php');          break;
+    case 'doc_upld':  require_once(TP_PAGES . 'PDocUpload.php');     break;
+    case 'edit_post': require_once(TP_PAGES . 'PEditPost.php');      break;
+    case 'save_post': require_once(TP_PAGES . 'PSavePost.php');      break;
+    case 'del_post':  require_once(TP_PAGES . 'PDelPost.php');       break;
 
-    // Bloggsidor
-    case 'news':        require_once(TP_PAGESPATH . 'blogg/PNews.php');         break;
-    case 'edit_post':   require_once(TP_PAGESPATH . 'blogg/PEditPost.php');     break;
-    case 'save_post':   require_once(TP_PAGESPATH . 'blogg/PSavePost.php');     break;
-    case 'del_post':    require_once(TP_PAGESPATH . 'blogg/PDelPost.php');      break;
-    
-    // Administratörsidor
-    case 'search_user': require_once(TP_PAGESPATH . 'admin/PSearchUser.php');   break;
-    case 'list_user':   require_once(TP_PAGESPATH . 'admin/PListUser.php');     break;
-    case 'show_user':   require_once(TP_PAGESPATH . 'admin/PShowUser.php');     break;
-    case 'edit_user':   require_once(TP_PAGESPATH . 'admin/PEditUser.php');     break;
-    case 'save_user':   require_once(TP_PAGESPATH . 'admin/PSaveUser.php');     break;
-    case 'edit_account':require_once(TP_PAGESPATH . 'admin/PEditAccount.php');  break;
-    case 'edit_passw':  require_once(TP_PAGESPATH . 'admin/PEditPassword.php'); break;
-    case 'new_passw':   require_once(TP_PAGESPATH . 'admin/PNewPassw.php');     break;
-    case 'del_account': require_once(TP_PAGESPATH . 'admin/PDelAccount.php');   break;
+    // Administration pages.
+    case 'list_usr':  require_once(TP_PAGES . 'adm/PListUsr.php');   break;
+    case 'srch_usr':  require_once(TP_PAGES . 'adm/PSrchUsr.php');   break;
+    case 'show_usr':  require_once(TP_PAGES . 'adm/PShowUsr.php');   break;
+    case 'edit_usr':  require_once(TP_PAGES . 'adm/PEditUsr.php');   break;
+    case 'edit_acnt': require_once(TP_PAGES . 'adm/PEditAcnt.php');  break;
+    case 'del_acnt':  require_once(TP_PAGES . 'adm/PDelAcnt.php');   break;
+    case 'edit_pwd':  require_once(TP_PAGES . 'adm/PEditPwd.php');   break;
+    case 'new_pwd':   require_once(TP_PAGES . 'adm/PNewPwd.php');    break;
 
-    // Installera databasen
-    case 'dump_db':     require_once(TP_PAGESPATH . 'admin/PDumpDB.php');       break;
-    case 'install_db':  require_once(TP_PAGESPATH . 'admin/PInstallDb.php');    break;
-    case 'fill_db':     require_once(TP_PAGESPATH . 'admin/PFillDb.php');       break;
+    // Handle the database.
+    case 'dump_db':   require_once(TP_PAGES . 'adm/PDumpDB.php');    break;
+    case 'inst_db':   require_once(TP_PAGES . 'adm/PInstallDb.php'); break;
+    case 'fill_db':   require_once(TP_PAGES . 'adm/PFillDb.php');    break;
    
-    // Loginhantering
-    case 'login_ex':    require_once(TP_PAGESPATH . 'login/PLoginEx.php');      break;
-    case 'logout':      require_once(TP_PAGESPATH . 'login/PLogout.php');       break;
+    // Login
+    case 'login':     require_once(TP_PAGES . 'login/PLogin.php');   break;
+    case 'logout':    require_once(TP_PAGES . 'login/PLogout.php');  break;
 
     // Work in progres
-    case 'work':        require_once(TP_PAGESPATH . 'PWork.php');               break;
-
-
-    default:            require_once(TP_PAGESPATH . 'PMain.php');               break;}
+    case 'work':      require_once(TP_PAGES . 'PWork.php');          break;
+    
+    default:          require_once(TP_PAGES . 'PMain.php');          break;}
 
 ?>

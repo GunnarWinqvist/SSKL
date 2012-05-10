@@ -60,7 +60,7 @@ HTMLCode;
 // <p><a title='Anmälan' href='?p=appl'><img src='../images/b_application.gif' alt='Anmälan' /></a></p>
 
 
-require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 

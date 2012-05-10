@@ -11,13 +11,15 @@
 //
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kolla behörighet med mera.
-
+/*
+ * Check if allowed to access.
+ * If $nextPage is not set, the page is not reached via the page controller.
+ * Then check if the viewer is signed in.
+ */
+if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 $intFilter = new CAccessControl();
-$intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRedirectToSignIn();   // Måste vara inloggad för att nå sidan.
-$intFilter->UserIsAuthorisedOrDie('fnk');         // Måste vara minst funktionär för att nå sidan.
+$intFilter->UserIsSignedInOrRedirect();
+$intFilter->UserIsAuthorisedOrDie('fnk'); 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +51,7 @@ HTMLCode;
 
 
 
-require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 

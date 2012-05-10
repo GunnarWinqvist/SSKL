@@ -42,7 +42,7 @@ Email: info@mkis.edu.my
 HTMLCode;
 
 
-require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 

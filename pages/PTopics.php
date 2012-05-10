@@ -10,11 +10,12 @@
 // 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kolla behörighet med mera.
-
-$intFilter = new CAccessControl();
-$intFilter->FrontControllerIsVisitedOrDie();
+/*
+ * Check if allowed to access.
+ * If $nextPage is not set, the page is not reached via the page controller.
+ * Then check if the viewer is signed in.
+ */
+if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +82,7 @@ $result->close();
 $page = new CHTMLPage(); 
 $pageTitle = "Ämnesområde";
 
-require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 ?>

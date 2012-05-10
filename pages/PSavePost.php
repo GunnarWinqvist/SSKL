@@ -10,13 +10,15 @@
 // 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Kolla behörighet med mera.
-//
+/*
+ * Check if allowed to access.
+ * If $nextPage is not set, the page is not reached via the page controller.
+ * Then check if the viewer is signed in.
+ */
+if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 $intFilter = new CAccessControl();
-$intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRedirectToSignIn();
-$intFilter->UserIsAuthorisedOrDie('fnk');         // Måste vara minst funktionär för att nå sidan.
+$intFilter->UserIsSignedInOrRedirect();
+$intFilter->UserIsAuthorisedOrDie('fnk');
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +81,7 @@ if ($debugEnable) {
 }
 
 // $redirect sätts i PNewTopic.php.
-$redirect = "news";
+$redirect = "topics";
 header('Location: ' . WS_SITELINK . "?p={$redirect}");
 exit;
 
