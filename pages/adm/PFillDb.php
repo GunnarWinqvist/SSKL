@@ -60,10 +60,11 @@ do {
     // eof.
     $i = 0;
     while (!feof($fh) && $row = trim(fgets($fh, $maxTextLength))) { 
-        $row = explode($delimiter, $row);
-        for($i=0; $i<count($row);$i++) 
-            $row[$i] = $dbAccess->WashParameter($row[$i]);
-        if ($debugEnable) $debug.="row = ".print_r($row, TRUE)."<br />\r\n";
+        $segments = explode($delimiter, $row);
+        for($j=0; $j<count($segments); $j++) 
+            $segments[$j] = $dbAccess->WashParameter($segments[$j]);
+        if ($debugEnable) 
+            $debug.="segments = ".print_r($segments, TRUE)."<br />\r\n";
     
         // Different querys dependent on the header.
         switch ($header) { 
@@ -76,8 +77,15 @@ do {
                         stadsdelBostad, 
                         postnummerBostad, 
                         statBostad)
-                    VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', 
-                        '{$row[4]}', '{$row[5]}');";
+                    VALUES (
+                        '{$segments[0]}', 
+                        '{$segments[1]}', 
+                        '{$segments[2]}', 
+                        '{$segments[3]}', 
+                        '{$segments[4]}', 
+                        '{$segments[5]}'
+                    );
+                ";
             break;
 
             case 'tablePerson':
@@ -93,9 +101,19 @@ do {
                         mobilPerson, 
                         person_idBostad, 
                         senastInloggadPerson)
-                    VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', 
-                        '{$row[4]}', '{$row[5]}', '{$row[6]}', '{$row[7]}', 
-                        '{$row[8]}', '{$row[9]}');";
+                    VALUES (
+                        '{$segments[0]}', 
+                        '{$segments[1]}', 
+                        '{$segments[2]}', 
+                        '{$segments[3]}', 
+                        '{$segments[4]}', 
+                        '{$segments[5]}', 
+                        '{$segments[6]}', 
+                        '{$segments[7]}', 
+                        '{$segments[8]}', 
+                        '{$segments[9]}'
+                    );
+                ";
             break;
             
             case 'tableFunktionar':
@@ -104,7 +122,12 @@ do {
                         idFunktion, 
                         funktionar_idPerson, 
                         funktionFunktionar)
-                    VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}');";
+                    VALUES (
+                        '{$segments[0]}', 
+                        '{$segments[1]}', 
+                        '{$segments[2]}'
+                    );
+                ";
             break;
 
             case 'tableMalsman':
@@ -113,7 +136,12 @@ do {
                         malsman_idPerson, 
                         nationalitetMalsman, 
                         personnummerMalsman)
-                    VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}');";
+                    VALUES (
+                        '{$segments[0]}', 
+                        '{$segments[1]}', 
+                        '{$segments[2]}'
+                    );
+                ";
             break;
 
             case 'tableElev':
@@ -126,8 +154,16 @@ do {
                         arskursElev, 
                         skolaElev, 
                         betaltElev)
-                    VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', 
-                        '{$row[4]}', '{$row[5]}', '{$row[6]}');";
+                    VALUES (
+                        '{$segments[0]}', 
+                        '{$segments[1]}', 
+                        '{$segments[2]}', 
+                        '{$segments[3]}', 
+                        '{$segments[4]}', 
+                        '{$segments[5]}', 
+                        '{$segments[6]}'
+                    );
+                ";
             break;
 
             case 'tableRelation':
@@ -135,7 +171,11 @@ do {
                     INSERT INTO {$tableRelation} (
                         relation_idElev, 
                         relation_idMalsman)
-                    VALUES ('{$row[0]}', '{$row[1]}');";
+                    VALUES (
+                        '{$segments[0]}', 
+                        '{$segments[1]}'
+                    );
+                ";
             break;
 
             case 'tableBlogg':
@@ -147,15 +187,21 @@ do {
                         textPost, 
                         tidPost, 
                         internPost)
-                    VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', 
-                        '{$row[4]}', '{$row[5]}');";
+                    VALUES (
+                        '{$segments[0]}', 
+                        '{$segments[1]}', 
+                        '{$segments[2]}', 
+                        '{$segments[3]}', 
+                        '{$segments[4]}', 
+                        '{$segments[5]}'
+                    );
+                ";
             break;
         }
         $dbAccess->SingleQuery($query);
         $i++;
     }
-    $mainTextHTML .= "Tabell ".$header.": ".$i." rader<br /> \n";
-
+    $mainTextHTML .= "Tabell ".$header.": ".$i." rader<br />\r\n";
 } while (!feof($fh));
 
 //Close the back-up file.
