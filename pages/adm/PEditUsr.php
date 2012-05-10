@@ -20,8 +20,9 @@ $intFilter = new CAccessControl();
 $intFilter->UserIsSignedInOrRedirect();
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Förbered databasen.
+/*
+ * Förbered databasen.
+ */
 $dbAccess           = new CdbAccess();
 $tablePerson        = DB_PREFIX . 'Person';
 $tableBostad        = DB_PREFIX . 'Bostad';
@@ -31,19 +32,19 @@ $tableMalsman       = DB_PREFIX . 'Malsman';
 $tableRelation      = DB_PREFIX . 'Relation';
 
 
-//////////////////////////////////////////////////////////////////////////////
-// Tag hand om inparametrar till sidan.
-
+/*
+ * Tag hand om inparametrar till sidan.
+ */
 $idPerson = isset($_GET['id']) ? $_GET['id'] : NULL;
 $idPerson = $dbAccess->WashParameter($idPerson);
 if ($debugEnable) $debug.="Input: id=".$idPerson." Authority = "
     .$_SESSION['authorityUser']."<br /> \n";
 
 
-//////////////////////////////////////////////////////////////////////////////
-// Kontrollera om personen har behörighet till sidan, d v s är personen på 
-// sidan, målsman till personen på sidan eller adm. Om inte avbryt.
-
+/*
+ * Kontrollera om personen har behörighet till sidan, d v s är personen på 
+ * sidan, målsman till personen på sidan eller adm. Om inte avbryt.
+ */
 $showPage = FALSE;
 if ($idPerson == $_SESSION['idUser']) $showPage = TRUE;
 if ($_SESSION['authorityUser'] == "adm") $showPage = TRUE;
@@ -56,15 +57,16 @@ if ($result = $dbAccess->SingleQuery($query)) {
     }
 }
 
-if (!$showPage) { // Om sidan inte får visas avbryt och visa felmeddelande.
+if (!$showPage) { 
+    // Om sidan inte får visas avbryt och visa felmeddelande.
     $message = "Du kan bara ändra lösenord på dig själv eller ett barn till dig.";
     require(TP_PAGESPATH . 'login/PNoAccess.php');
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Hämta den nuvarande informationen om personen ur databasen.
-
+/*
+ * Hämta den nuvarande informationen om personen ur databasen.
+ */
 $totalStatements = 5;
 $query = <<<QUERY
 SELECT * FROM ({$tablePerson} LEFT OUTER JOIN {$tableBostad} 
@@ -105,9 +107,9 @@ if (isset($arrayResult[4])) {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Generera formuläret med QuickForm2.
-
+/*
+ * Generera formuläret med QuickForm2.
+ */
 require_once 'HTML/QuickForm2.php';
 require_once 'HTML/QuickForm2/Renderer.php';
 
@@ -178,11 +180,13 @@ $mobilPerson->addRule('maxlength',
 
 
 // Funktionär
-if ($_SESSION['authorityUser'] == 'fnk' or  $_SESSION['authorityUser'] == 'adm') { 
+if ($_SESSION['authorityUser'] == 'fnk' or  
+    $_SESSION['authorityUser'] == 'adm') {
     // Visa bara om man är funktionär eller adm. Annars kan 
     // man sätta sig själv till funk och få tillgång till mer än man ska.
     $fsFunk = $form->addElement('fieldset')->setLabel('Funktionär');
-    if (isset($arrayResult[1])) { //Resultat från queryn från början av sidan.
+    if (isset($arrayResult[1])) { 
+        //Resultat från queryn från början av sidan.
         while($row = $arrayResult[1]->fetch_object()) {
             $fsFunk->addElement('checkbox', 'delFunk', 
                 array('value' => $row->idFunktion))
@@ -379,9 +383,9 @@ $buttons->addElement('static', 'cancelButton')
 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Behandla informationen i formuläret.
-
+/*
+ * Behandla informationen i formuläret.
+ */
 $mainTextHTML = "";
 
 // Ta bort 'space' först och sist på alla värden.
@@ -394,24 +398,27 @@ if ($form->validate()) {
     $formValues       = $form->getValue();
 
     // Uppdatera personuppgifter.
-    $fornamnPerson 	  = $dbAccess->WashParameter(strip_tags($formValues['fornamn']));
-    $efternamnPerson  = $dbAccess->WashParameter(strip_tags($formValues['efternamn']));
-    $epostPerson 	  = $dbAccess->WashParameter(strip_tags($formValues['ePost']));
-    $mobilPerson      = $dbAccess->WashParameter(strip_tags($formValues['mobil']));
-    $query = <<<QUERY
-UPDATE {$tablePerson} SET 
-    fornamnPerson   = '{$fornamnPerson}',
-    efternamnPerson = '{$efternamnPerson}',
-    epostPerson     = '{$epostPerson}',
-    mobilPerson     = '{$mobilPerson}'
-    WHERE idPerson = '{$idPerson}';
-QUERY;
+    $fornamnPerson 	  = $dbAccess->WashParameter(
+        strip_tags($formValues['fornamn']));
+    $efternamnPerson  = $dbAccess->WashParameter(
+        strip_tags($formValues['efternamn']));
+    $epostPerson 	  = $dbAccess->WashParameter(
+        strip_tags($formValues['ePost']));
+    $mobilPerson      = $dbAccess->WashParameter(
+        strip_tags($formValues['mobil']));
+    $query = "
+        UPDATE {$tablePerson} SET 
+            fornamnPerson   = '{$fornamnPerson}',
+            efternamnPerson = '{$efternamnPerson}',
+            epostPerson     = '{$epostPerson}',
+            mobilPerson     = '{$mobilPerson}'
+        WHERE idPerson = '{$idPerson}';";
     $dbAccess->SingleQuery($query);
 
     // Radera funktion för funktionär.
     if (isset($formValues['delFunk'])) {
         $idFunktion = $formValues['delFunk'];
-        if ($debugEnable) $debug .= "delFunk=".$idFunktion."<br /> \n";
+        if ($debugEnable) $debug .= "delFunk=".$idFunktion."<br />\r\n";
         $query = "
             DELETE FROM {$tableFunktionar} 
             WHERE idFunktion = '{$idFunktion}';";
@@ -419,13 +426,18 @@ QUERY;
     }
     
     // Lägg till funktion för funktionär.
-    if (isset($formValues['addFunk'])) {
-        $funktion = $dbAccess->WashParameter(strip_tags($formValues['addFunk']));
-        if ($debugEnable) $debug .= "addFunk=".$funktion."<br /> \n";
-        $query = <<<QUERY
-INSERT INTO {$tableFunktionar} (funktionar_idPerson, funktionFunktionar)
-    VALUES ('{$idPerson}', '{$funktion}');
-QUERY;
+    $funktion = isset($formValues['addFunk'])
+        ? $dbAccess->WashParameter(strip_tags($formValues['addFunk']))
+        : NULL;
+    if ($funktion) {
+        if ($debugEnable) $debug .= "addFunk=".$funktion."<br />\r\n";
+        $query = "
+            INSERT INTO {$tableFunktionar} (
+                funktionar_idPerson, 
+                funktionFunktionar)
+            VALUES (
+                '{$idPerson}', 
+                '{$funktion}');";
         $dbAccess->SingleQuery($query);
     }
 
