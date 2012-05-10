@@ -211,10 +211,11 @@ QUERY;
         $idPerson = $dbAccess->LastId();
         $redirect = "edit_usr&id=".$idPerson;
     }
-    if ($debugEnable) $debug .= "idPerson: " . $idPerson . "<br /> \n";
+    if ($debugEnable) $debug .= "idPerson: " . $idPerson . "<br />\r\n";
 
     // Skicka lösenordet i mejl om detta är begärt.
     if (isset($formValues['send'])) {
+        if ($debugEnable) $debug.="send= ".$formValues['send']."<br />\r\n";
         // Hämta mejladress. från personen eller dess målsman.
         $query = "
             SELECT ePostPerson FROM {$tablePerson} 
@@ -225,14 +226,14 @@ QUERY;
         if ($row->ePostPerson) {
             $eMailAdr = $row->ePostPerson;
         } else {
-            $query = <<<QUERY
-SELECT ePostMalsman FROM 
-    (({$tablePerson} JOIN {$tableElev} ON idPerson = elev_idPerson)
-    JOIN {$viewMalsman} ON idPerson = idElev)
-    WHERE idElev = '{$idPerson}';
-QUERY;
-            $result = $dbAccess->SingleQuery($query);
-            if ($result) {
+            $query = "
+                SELECT ePostMalsman FROM 
+                    (({$tablePerson} JOIN {$tableElev} 
+                    ON idPerson = elev_idPerson)
+                    JOIN {$viewMalsman} ON idPerson = idElev)
+                WHERE idElev = '{$idPerson}';
+            ";
+            if ($result = $dbAccess->SingleQuery($query)) {
                 $row = $result->fetch_object();
                 $result->close();
             }
