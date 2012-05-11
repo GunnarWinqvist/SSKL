@@ -54,7 +54,10 @@ $mainTextHTML .= <<<HTMLCode
 <form action='?p=doc_upld' enctype='multipart/form-data' method='post'>
 <p>Vilket dokument vill du ladda upp?</p>
 <input type='file' name='file' value='' />
-<p>Vad ska dokumentet heta på servern? Skriv namnet utan extension (.pdf, .doc, etc)</p>
+<p>Vad ska dokumentet heta på servern? Skriv namnet utan extension 
+(.pdf, .doc, etc).</p>
+<p>Varning! Om dokumentnamnet redan finns kommer den gamla filen
+att skrivas över utan varning.</p>
 <input type='text' name='filename' value='' />
 
 <input type='submit' name='submit' value='Ladda upp' />
