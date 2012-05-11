@@ -30,6 +30,9 @@ $tableMalsman       = DB_PREFIX . 'Malsman';
 $tableElev          = DB_PREFIX . 'Elev';
 $tableRelation      = DB_PREFIX . 'Relation';
 $tableBlogg         = DB_PREFIX . 'Blogg';
+$tableAlbum         = DB_PREFIX . 'Album';
+$tablePicture       = DB_PREFIX . 'Picture';
+
 $dumpFileName       = "DB_dump.txt";
 $delimiter          = "¤";
 $substitution       = "*";
@@ -47,7 +50,9 @@ $querys = array(
     array( "\r\n-*-tableMalsman\r\n",    "SELECT * FROM {$tableMalsman};"),
     array( "\r\n-*-tableElev\r\n",       "SELECT * FROM {$tableElev};"),
     array( "\r\n-*-tableRelation\r\n",   "SELECT * FROM {$tableRelation};"),
-    array( "\r\n-*-tableBlogg\r\n",      "SELECT * FROM {$tableBlogg};")
+    array( "\r\n-*-tableBlogg\r\n",      "SELECT * FROM {$tableBlogg};"),
+    array( "\r\n-*-tableAlbum\r\n",      "SELECT * FROM {$tableAlbum};"),
+    array( "\r\n-*-tablePicture\r\n",      "SELECT * FROM {$tablePicture};")
     );
     
 foreach ($querys as $set) {
