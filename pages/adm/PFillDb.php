@@ -30,6 +30,8 @@ $tableMalsman       = DB_PREFIX . 'Malsman';
 $tableElev          = DB_PREFIX . 'Elev';
 $tableRelation      = DB_PREFIX . 'Relation';
 $tableBlogg         = DB_PREFIX . 'Blogg';
+$tableAlbum         = DB_PREFIX . 'Album';
+$tablePicture       = DB_PREFIX . 'Picture';
 $dumpFileName       = "DB_dump.txt";
 $delimiter          = "¤";
 $maxTextLength      = 65535; // Length of datatyp TEXT in MqSQL.
@@ -194,6 +196,46 @@ do {
                         '{$segments[3]}', 
                         '{$segments[4]}', 
                         '{$segments[5]}'
+                    );
+                ";
+            break;
+
+            case 'tableAlbum':
+                $query = "
+                    INSERT INTO {$tableAlbum} (
+                        idAlbum, 
+                        album_idUser, 
+                        nameAlbum, 
+                        descriptionAlbum,
+                        timeCreatedAlbum, 
+                        timeEditedAlbum,
+                        signaturePictId
+                    )
+                    VALUES (
+                        '{$row[0]}', 
+                        '{$row[1]}', 
+                        '{$row[2]}', 
+                        '{$row[3]}', 
+                        '{$row[4]}', 
+                        '{$row[5]}',
+                        '{$row[6]}'
+                    );
+                ";
+            break;
+
+            case 'tablePicture':
+                $query = "
+                    INSERT INTO {$tablePicture} (
+                        idPicture, 
+                        picture_idAlbum, 
+                        namePicture, 
+                        descriptionPicture
+                    )
+                    VALUES (
+                        '{$row[0]}', 
+                        '{$row[1]}', 
+                        '{$row[2]}', 
+                        '{$row[3]}'
                     );
                 ";
             break;

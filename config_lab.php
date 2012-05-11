@@ -103,6 +103,12 @@ define('WS_FLOATINGDESIGN', TRUE);
 define('WS_SITELINK',   'http://localhost/');	
 
 /**
+ * Link to picture archive.
+ */
+define('WS_PICTUREARCHIVE', 
+    'http://localhost/picture_archive/');
+
+/**
  * Mail address to the site.
  */
 
@@ -261,7 +267,7 @@ define('PA_IMAGEQUALITYTHUMB', 		'3'); //1:Poor ... 5:Very good
 /**
  * Prefix to use for pictures.
  */
-define('PA_NORMALPREFIX', 			'norm_');
+define('PA_NORMALPREFIX', 			'pict_');
 
 /**
  * Prefix to use for thumbs.

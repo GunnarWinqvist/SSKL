@@ -103,6 +103,12 @@ define('WS_FLOATINGDESIGN', TRUE);
 define('WS_SITELINK',   'http://svenskaskolankualalumpur.com/');
 
 /**
+ * Link to picture archive.
+ */
+define('WS_PICTUREARCHIVE', 
+    'http://svenskaskolankualalumpur.com/picture_archive/');
+
+/**
  * Mail address to the site.
  */
 define('WS_SITEMAIL',   'webmaster@svenskaskolankualalumpur.com');
@@ -262,7 +268,7 @@ define('PA_IMAGEQUALITYTHUMB', 		'3'); //1:Poor ... 5:Very good
 /**
  * Prefix to use for pictures.
  */
-define('PA_NORMALPREFIX', 			'norm_');
+define('PA_NORMALPREFIX', 			'pict_');
 
 /**
  * Prefix to use for thumbs.

@@ -45,13 +45,17 @@ $tableMalsman           = DB_PREFIX . 'Malsman';
 $tableRelation          = DB_PREFIX . 'Relation';
 $tableBlogg             = DB_PREFIX . 'Blogg';
 $viewMalsman            = DB_PREFIX . 'ListaMalsman';
+$tableAlbum             = DB_PREFIX . 'Album';
+$tablePicture           = DB_PREFIX . 'Picture';
 
 // $totalStatements must be edited manually. Count the statements in the
 // query below and enter the number here. Only used for debug help.
-$totalStatements = 17;
+$totalStatements = 21;
 $query = <<<QUERY
 
 -- Tag bort tabellerna om de redan finns.
+DROP TABLE IF EXISTS {$tablePicture};
+DROP TABLE IF EXISTS {$tableAlbum};
 DROP VIEW  IF EXISTS {$viewMalsman};
 DROP TABLE IF EXISTS {$tableBlogg};
 DROP TABLE IF EXISTS {$tableRelation};
@@ -143,6 +147,41 @@ CREATE TABLE {$tableBlogg} (
     textPost            TEXT,
     tidPost             INT DEFAULT '0',
     internPost          BOOLEAN
+);
+
+-- Table for album.
+CREATE TABLE {$tableAlbum} (
+
+    -- Primary key(s)
+    idAlbum            INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    
+    -- Attributes
+    album_idUser       INT,  
+    nameAlbum          CHAR(100),
+    descriptionAlbum   TEXT,
+    timeCreatedAlbum   INT DEFAULT '0',
+    timeEditedAlbum    INT DEFAULT '0',
+    signaturePictId    INT DEFAULT '0',
+
+    -- Foreign key(s)
+    FOREIGN KEY (album_idUser) REFERENCES {$tablePerson}(idPerson)
+
+);
+
+-- Table for pictures in album.
+CREATE TABLE {$tablePicture} (
+
+    -- Primary key(s)
+    idPicture            INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    
+    -- Attributes
+    picture_idAlbum      INT NOT NULL,  
+    namePicture          CHAR(100),
+    descriptionPicture   TEXT,
+
+    -- Foreign key(s)
+    FOREIGN KEY (picture_idAlbum) REFERENCES {$tableAlbum}(idAlbum)
+
 );
 
 -- Lägg till administratör för att kunna administrera databasen första 

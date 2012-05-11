@@ -35,6 +35,11 @@ body {
     color: #1E3E7B;
 }
 
+.noDeco {
+    text-decoration: none;
+    color: #000;
+}
+
 
 /***********************************************************************/
 /* Inställningar för top.                                          */
@@ -553,4 +558,95 @@ th {
     font-size:8px;
     text-align:center;
 }
-    
+
+/***********************************************************************/
+/* Settings for the picture gallery.                                   */
+/***********************************************************************/
+/*
+#container {
+	margin: auto;
+	width: 700px;
+	border:1px solid #111;
+	border-top:0px;
+	background-color: #555;
+}
+*/
+
+#frameHolder{
+   padding:0px;
+   background-color: #dae6fe;
+   border:0px;
+   width:650px;
+   text-align:center;
+
+}
+
+
+iframe{
+   text-align:center;
+   padding:0px;
+   border:0px solid #dae6fe;
+   width:650px;
+   height:450px;
+   margin:auto;
+   text-align:center;
+   overflow: hidden;
+   /*background-color: #555;*/
+}
+
+#list{
+   width:650px;
+   height:120px;
+   overflow:auto;
+   text-align:center;
+   background-color: #dae6fe;
+
+}
+
+#content {
+	padding: 5px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	color: #666666;
+    text-align: left;
+}
+
+#content #form1 legend {
+	padding: 5px;
+	margin: auto;
+}
+
+/* Embedded image frame. */
+#if {
+	background-color: #dae6fe;
+    background-image: none;
+	margin:0px auto;
+	padding:20px;
+	text-align:center;
+}
+
+#if img{
+	border:1px solid #000;
+	text-align:center;
+}
+
+#imgInfo {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+    text-align:center;
+    margin:0px;
+    padding:0px;
+    color:#1E3E7B;
+}
+
+#imgInfo h2 {
+    font-size:12px;
+    font-weight:bold;
+
+}
+
+#imgInfo p {
+
+}
+
