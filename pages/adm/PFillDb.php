@@ -212,13 +212,13 @@ do {
                         signaturePictId
                     )
                     VALUES (
-                        '{$row[0]}', 
-                        '{$row[1]}', 
-                        '{$row[2]}', 
-                        '{$row[3]}', 
-                        '{$row[4]}', 
-                        '{$row[5]}',
-                        '{$row[6]}'
+                        '{$segments[0]}', 
+                        '{$segments[1]}', 
+                        '{$segments[2]}', 
+                        '{$segments[3]}', 
+                        '{$segments[4]}', 
+                        '{$segments[5]}',
+                        '{$segments[6]}'
                     );
                 ";
             break;
@@ -232,10 +232,10 @@ do {
                         descriptionPicture
                     )
                     VALUES (
-                        '{$row[0]}', 
-                        '{$row[1]}', 
-                        '{$row[2]}', 
-                        '{$row[3]}'
+                        '{$segments[0]}', 
+                        '{$segments[1]}', 
+                        '{$segments[2]}', 
+                        '{$segments[3]}'
                     );
                 ";
             break;
