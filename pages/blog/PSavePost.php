@@ -46,7 +46,8 @@ $tidPost        = time();
 //Tvätta inparametrarna.
 $idPost 	 = $dbAccess->WashParameter($idPost);
 $internPost  = $dbAccess->WashParameter($internPost);
-$tagsAllowed = '<h1><h2><h3><h4><h5><h6><p><a><br><i><em><b><strong><li><ol><ul><a><style><font><span>';
+$tagsAllowed = '<h1><h2><h3><h4><h5><h6><p><a><br><i><em><b><strong><li><ol>
+    <ul><a><style><font><span><img>';
 $titelPost   = $dbAccess->WashParameter(strip_tags($titelPost));
 $textPost 	 = $dbAccess->WashParameter(strip_tags($textPost, $tagsAllowed));
 

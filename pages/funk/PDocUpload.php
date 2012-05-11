@@ -1,6 +1,6 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 //
 // PDocumentUpload.php
 // Anropas med 'doc_upload' från index.php.
@@ -21,14 +21,14 @@ $intFilter->UserIsSignedInOrRedirect();
 $intFilter->UserIsAuthorisedOrDie('fnk'); 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Tag hand om inparametrar till sidan.
 
 $filename = isset($_POST['filename']) ? $_POST['filename'] : NULL;
 if ($debugEnable) $debug .= "filename: " . $filename . "<br /> \n";
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Ladda upp filen och kontrollera att det har gått rätt till.
 
 $mainTextHTML = "";
@@ -55,11 +55,22 @@ if (is_uploaded_file( $_FILES['file']['tmp_name'] )) {
         case 'application/x-msexcel':
             $extension = '.xls';
             break;
+        case 'image/jpg':
+            $extension = '.jpg';
+            break;
+        case 'image/jpeg':
+            $extension = '.jpg';
+            break;
+        case 'image/pjpeg':
+            $extension = '.jpg';
+            break;
     }
     if (!$extension)
-        $mainTextHTML .= "<p>Du kan bara ladda upp filer av typerna .pdf, .doc eller .xls</p>";
+        $mainTextHTML .= "<p>Du kan bara ladda upp filer av typerna .pdf, .doc,
+            .xls eller .jpg</p>";
     else {
-        $result = move_uploaded_file($_FILES['file']['tmp_name'], TP_DOCUMENTS."/".$filename.$extension);
+        $result = move_uploaded_file($_FILES['file']['tmp_name'], 
+            TP_DOCUMENTS."/".$filename.$extension);
         
         if ($result == 1) {
             // Om det gick bra så hoppa tillbaka till doc.
@@ -74,13 +85,13 @@ $mainTextHTML .= "<a href='?p=doc'>Tillbaka</a>";
 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Skriv ut sidan.
 
 $page = new CHTMLPage(); 
 $pageTitle = "Document upload";
 
-require(TP_PAGESPATH.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); 
 
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
