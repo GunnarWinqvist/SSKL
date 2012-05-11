@@ -1,11 +1,12 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// PDocuments.php
-// Visar en lista med de dokument som ligger under foldern 'documents'. Dokumenten i listan är klickbara.
-// 
-// 
+/**
+ * Dokumentlista (doc)
+ *
+ * Visar en lista med de dokument som ligger under foldern 'documents'. 
+ * Dokumenten i listan är klickbara.
+ *
+ */
 
 
 /*
@@ -19,24 +20,36 @@ $intFilter->UserIsSignedInOrRedirect();
 $intFilter->UserIsAuthorisedOrDie('fnk');
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Generera huvudkolumnen.
-
-$mainTextHTML = <<<HTMLCode
-<h2>Dokumentdatabas</h2>
-<ul>
-HTMLCode;
+/*
+ * Generera dokumentlistan i en array.
+ */
 
 $dh = opendir(TP_DOCUMENTS);
 while ($file = readdir($dh)) {
-    if ($file !="." AND $file !="..") {
-        $mainTextHTML .= "<li> <a href='../documents/{$file}'>{$file}</a> </li>";
-    }
+    if ($file !="." AND $file !="..")
+        $fileList[] = $file;
 }
 closedir($dh);
-$mainTextHTML .= "</ul>";
+
+// Sortera listan.
+asort($fileList, SORT_STRING);
+
+
+/*
+ * Skriv ut sidan.
+ */
+$mainTextHTML = <<<HTMLCode
+<h2>Dokumentdatabas</h2>
+<ul>
+
+HTMLCode;
+
+foreach ($fileList as $key => $file) {
+    $mainTextHTML .= "<li> <a href='../documents/{$file}'>{$file}</a></li>\r\n";
+}
 
 $mainTextHTML .= <<<HTMLCode
+</ul>
 <h2>Ladda upp dokument till servern</h2>
 <form action='?p=doc_upld' enctype='multipart/form-data' method='post'>
 <p>Vilket dokument vill du ladda upp?</p>
@@ -48,13 +61,11 @@ $mainTextHTML .= <<<HTMLCode
 </form>
 HTMLCode;
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Skriv ut sidan.
 
 $page = new CHTMLPage(); 
 $pageTitle = "Dokument";
 
-require(TP_PAGES.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+require(TP_PAGES.'rightColumn.php'); 
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 
