@@ -130,11 +130,6 @@ $newPasswordPerson->addRule('eq', 'Du har angett två olika lösenord.',
 // Skicka lösenord?
 $sendPassword = $fsAccount->addElement('checkbox', 'send', array('value' => '1'))
     ->setContent('Skicka lösenordet med mejl till användaren');
-$fsAccount->addElement('static', 'comment')
-    ->setContent('Det går för närvarande inte att skicka lösenordet till 
-        gmail-adresser. Om du har en gmail-adress registrerad i föreningens 
-        register så måste du skicka en lösenordsförfrågan manuellt till 
-        registrering@svenskaskolankualalumpur.com');
 
 
 // Behörighetsgrupp
