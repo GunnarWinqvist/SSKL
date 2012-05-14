@@ -272,7 +272,7 @@ th {
 /* Inställningar för högerkolumnen.                                    */
 /***********************************************************************/
 
-.news, .login {
+.news, .login , .calendar{
     margin: 0px;
     margin-bottom: 20px;
     padding: 5px;

@@ -100,6 +100,7 @@ switch($nextPage) {
     case 'lists_ex':  require_once(TP_PAGES . 'funk/PListsEx.php');      break;
     case 'doc':       require_once(TP_PAGES . 'funk/PDocs.php');         break;
     case 'doc_upld':  require_once(TP_PAGES . 'funk/PDocUpload.php');    break;
+    case 'edit_cal':  require_once(TP_PAGES . 'funk/PEditCalendar.php'); break;
 
     // Administration pages.
     case 'list_usr':  require_once(TP_PAGES . 'adm/PListUsr.php');       break;

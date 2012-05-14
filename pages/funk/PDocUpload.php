@@ -1,13 +1,12 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// PDocumentUpload.php
-// Anropas med 'doc_upload' från index.php.
-// Sidan laddar upp ett dokument till servern.
-// Input: 'filename' $_POST 'file' hanterat av $_FILES
-// Output:  
-// 
+/**
+ * Document upload (doc_upload)
+ *
+ * Sidan laddar upp ett dokument till servern.
+ * Input: 'filename' $_POST 'file' hanterat av $_FILES
+ *
+ */
 
 
 /*
@@ -21,15 +20,16 @@ $intFilter->UserIsSignedInOrRedirect();
 $intFilter->UserIsAuthorisedOrDie('fnk'); 
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Tag hand om inparametrar till sidan.
-
+/*
+ * Tag hand om inparametrar till sidan.
+ */
 $filename = isset($_POST['filename']) ? $_POST['filename'] : NULL;
 if ($debugEnable) $debug .= "filename: " . $filename . "<br /> \n";
 
 
-///////////////////////////////////////////////////////////////////////////////
-// Ladda upp filen och kontrollera att det har gått rätt till.
+/*
+ * Ladda upp filen och kontrollera att det har gått rätt till.
+ */
 
 $mainTextHTML = "";
 $extension = "";

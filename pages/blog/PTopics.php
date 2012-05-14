@@ -1,14 +1,13 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// PNews.php
-// Anropas med 'news' från index.php.
-// Sidan visar ett ämne med alla tillhörande poster..
-// Input:  
-// Output:  
-// 
-
+/**
+ * Aktuellt (topics)
+ *
+ * Sidan listar alla artiklar ur bloggen i databasen.
+ * Högerkolumnen toppas av en kalender som akn editeras.
+ *
+ */
+ 
 
 /*
  * Check if allowed to access.
@@ -18,18 +17,17 @@
 if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Förbered databasen.
-
+/*
+ * Förbered databasen.
+ */
 $dbAccess       = new CdbAccess();
 $tableBlogg	    = DB_PREFIX . 'Blogg';
 $tablePerson    = DB_PREFIX . 'Person';
 
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Hämta alla blogginlägg och lägg i huvudkolumnen.
-
+/*
+ * Hämta alla blogginlägg och lägg i huvudkolumnen.
+ */
 $onlyPublic = "WHERE internPost = 'FALSE'"; //Om inte inloggad så visa bara ickeinterna inlägg.
 if (isset($_SESSION['idUser'])) $onlyPublic = ""; //Om inloggad så visa alla.
 
@@ -76,13 +74,42 @@ HTMLCode;
 $result->close();
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Skriv ut sidan.
+/*
+ * Skapa högerkolumnen.
+ */
+// Hämta först standardkolumnen och stoppa i $rightColumnHTML.
+require(TP_PAGES.'rightColumn.php');
 
+// Öppna filen kalender.txt och läs in den i $calendar.
+$calendarPath = TP_DOCUMENTS . "Kalender.txt";
+$calendar = file_get_contents($calendarPath);
+if ($debugEnable) $debug .= "calendarPath = ".$calendarPath.
+    " calendar=".$calendar."<br />\r\n";
+
+// Lägg till kalendern överst i högerkolumnen.
+$calendar = "<div class='calendar'><h3>Kalender</h3>" . $calendar;
+
+// Och en editknapp om man är minst funk.
+if ($_SESSION['authorityUser'] == "fnk" OR $_SESSION['authorityUser'] == "adm")
+    $calendar = $calendar . <<<HTMLCode
+<div class='clear_button'>
+<a class='button' href='?p=edit_cal' onclick="this.blur();">
+    <span>Editera kalender</span></a></div>
+</div>
+HTMLCode;
+
+else 
+    $calendar = $calendar . "</div>";
+
+// Lägg kalendern först i högerkolumnen.
+$rightColumnHTML = $calendar . $rightColumnHTML;
+
+
+/*
+ * Spapa sidan och visa den.
+ */
 $page = new CHTMLPage(); 
-$pageTitle = "Ämnesområde";
-
-require(TP_PAGES.'rightColumn.php'); // Genererar en högerkolumn i $rightColumnHTML
+$pageTitle = "Aktuellt";
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);
 
 ?>

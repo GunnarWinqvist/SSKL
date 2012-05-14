@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Template page.
+ * Kalender (cal)
  *
- * The template page is a fully functional displayable page on the UBE site. 
- * It is used for creating new pages.
+ * Skapar en sida med en frame där dokumentet $calendar visas. 
+ * 
  */ 
 
 
@@ -14,22 +14,30 @@
  * Then check if the viewer is signed in.
  */
 if(!isset($nextPage)) die('Direct access to the page is not allowed.');
-$intFilter = new CAccessControl();
-$intFilter->UserIsSignedInOrRedirect();
-//$intFilter->UserIsAuthorisedOrDie('adm'); //Must be adm to access the page.
 
-if ($debugEnable) $debug .= "This is a template page.<br />\r\n";
+
+/*
+ * Definition av kalenderfilen. Om filen ändrar namn eller typ så måste 
+ * raderna nedan också ändras.
+ */
+$calendar = WS_DOCLINK . "Evighetskalender.xls";
+$docType = "application/excel";
+
+if ($debugEnable) $debug .= "calendar=".$calendar." docType=".$docType.
+    "<br />\r\n";
+    
 
 /*
  * Define everything that shall be on the page, generate the left column
  * and then display the page.
  */
 $page         = new CHTMLPage(); 
-$pageTitle    = "Template";
+$pageTitle    = "Kalender";
 
 $mainTextHTML = <<<HTMLCode
-<h1>Mallsida</h1>
-<p>Detta är en mallsida för att skapa nya sidor</p>
+<h1>{$pageTitle}</h1>
+<iframe src='{$calendar}'>Här skulle kalendern ha visats, men på grund av 
+något fel så gör den inte det.</iframe>
 
 HTMLCode;
 

@@ -100,13 +100,22 @@ define('WS_FLOATINGDESIGN', TRUE);
 /**
  * Link to site.
  */
-define('WS_SITELINK',   'http://localhost/');	
+define('WS_SITELINK',   'http://localhost/');
+
+/**
+ * Link to documents.
+ */
+define('WS_DOCLINK',   WS_SITELINK . 'documents/');
+
+/**
+ * Link to images.
+ */
+define('WS_IMAGELINK',   WS_SITELINK . 'images/');
 
 /**
  * Link to picture archive.
  */
-define('WS_PICTUREARCHIVE', 
-    'http://localhost/picture_archive/');
+define('WS_PICTUREARCHIVE', WS_SITELINK . 'picture_archive/');
 
 /**
  * Mail address to the site.
@@ -135,7 +144,7 @@ $menuElements = Array (
     'Länkar'        => 'links',
     'Karta'         => 'map',
     'Kontakt'       => 'contact',
-    'Anmälan'       => 'appl'
+    'Anmälan'       => 'appl',
 );
 
 /**

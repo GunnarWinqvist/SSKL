@@ -78,7 +78,7 @@ $mainTextHTML .= <<<HTMLCode
 <p>Titel</p>
 <input type='text' name='titelPost' size='60' maxlength='100' value='{$titelPost}' />
 <p>Text</p>
-<textarea name='textPost' rows='20' cols='50' maxlengt='65535'>{$textPost}</textarea><br />
+<textarea name='textPost' rows='20' cols='50' maxlength='65535'>{$textPost}</textarea><br />
 <input type='checkbox' name='internPost' value='1' {$internPost} />Ska endast kunna läsas av inloggade.<br /><br />
 <input type='image' title='Spara' src='../images/b_enter.gif' alt='Spara' />
 <a title='Cancel' href='?p=topics' ><img src='../images/b_cancel.gif' alt='Cancel' /></a>

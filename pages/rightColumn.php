@@ -1,10 +1,11 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// rightColumn.php
-// I den här filen är all kod samlad som genererar högerkolumnen för alla sidor.
-// 
+/**
+ * Högerkolumnen
+ *
+ * I den här filen är all kod samlad som genererar högerkolumnen för alla sidor.
+ *
+ */
 
 $rightColumnHTML = "";
 
@@ -98,7 +99,7 @@ $tableBlogg          = DB_PREFIX . 'Blogg';
 
 $rightColumnHTML .= <<<HTMLCode
 <div class='news'>
-<h3>Senaste nytt</h3>
+<h3>Aktuellt</h3>
 HTMLCode;
 
 $onlyPublic = "WHERE internPost = 'FALSE'"; //Om inte inloggad så visa bara ickeinterna inlägg.
