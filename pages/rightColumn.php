@@ -43,21 +43,23 @@ HTMLCode;
        $rightColumnHTML .= <<<HTMLCode
 <h3>Administratör</h3>
 <div class='clear_button'>
-<a class='button' href='?p=edit_acnt' onclick="this.blur();"><span>Lägg till ny användare</span></a></div>
+<a class='button' href='?p=edit_acnt' onclick="this.blur();"><span>Skapa ny användare</span></a></div>
 <div class='clear_button'>
 <a class='button' href='?p=srch_usr' onclick="this.blur();"><span>Sök en person</span></a></div>
 <div class='clear_button'>
-<a class='button' href='?p=dump_db' onclick="this.blur();"><span>Dumpa databasen på fil</span></a></div>
-<p>Följande aktiviteter förstör databasen och går inte att backa!</p>
+<a class='button' href='?p=dump_db' onclick="this.blur();"><span>Skriv ut databasen</span></a></div>
+<div class='warning'>
+<p><b>Varning! Följande åtgärder skriver över databasen och kan inte backas.</b></p>
 <div class='clear_button'><a class='button' href='?p=inst_db' 
     onclick="this.blur(); 
     return confirm('Vill du installera om databasen? Alla data blir förstörda och kan inte återskapas.');">
-    <span>Ominstallera databasen</span></a></div>
+    <span>Installera databasen</span></a></div>
 <div class='clear_button'>
 <a class='button' href='?p=fill_db' 
     onclick="this.blur(); 
     return confirm('Vill du fylla databasen från fil? Alla gamla data kommer att skrivas över.');">
-    <span>Fyll databasen från fil</span></a></div>
+    <span>Fyll databasen</span></a></div>
+</div>
 
 HTMLCode;
     }

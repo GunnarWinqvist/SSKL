@@ -320,6 +320,11 @@ th {
     font-weight: bold;
 }
 
+.warning  {
+    padding: 5px;
+    border: 1px solid red;
+}
+
 
 /***********************************************************************/
 /* Inställningar för knappar.                                          */
@@ -340,7 +345,7 @@ th {
     font: bold 12px arial, sans-serif;
     height: 20px;
     margin-right: 6px;
-    padding-right: 18px; /* sliding doors padding */
+    padding-right: 10px; /* sliding doors padding */
     text-decoration: none;
 }
 
@@ -348,7 +353,7 @@ th {
     background: transparent url('../images/b_button_span.gif') no-repeat;
     display: block;
     line-height: 12px;
-    padding: 5px 0 5px 18px;
+    padding: 5px 0 5px 10px;
 } 
 
 
