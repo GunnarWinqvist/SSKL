@@ -94,7 +94,8 @@ switch($nextPage) {
     case 'edit_alb':  require_once(TP_PAGES . 'glry/PEditAlbum.php');    break;
     case 'show_pict': require_once(TP_PAGES . 'glry/PShowPict.php');     break;
     case 'add_pict':  require_once(TP_PAGES . 'glry/PAddPict.php');      break;
-
+    case 'sign_pict': require_once(TP_PAGES . 'glry/PSignPict.php');     break;
+    
     // Funktionar pages
     case 'lists':     require_once(TP_PAGES . 'funk/PLists.php');        break;
     case 'lists_ex':  require_once(TP_PAGES . 'funk/PListsEx.php');      break;

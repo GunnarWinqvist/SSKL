@@ -174,7 +174,7 @@ if ($form->validate()) {
         $form->removeChild($buttons);   // Remove buttons.
         $form->toggleFrozen(true);      // Freeze the form for display.
         $mainTextHTML .= "<a title='Vidare' href='?p={$redirect}'>
-            <img src='images/accept.png' alt='Vidare' /></a> <br />\n";
+            <img src='images/accept.png' alt='Vidare' /></a> <br />\r\n";
 
     } else {
         $redirect = str_replace("&amp;", "&", $redirect);
@@ -198,6 +198,28 @@ $renderer = HTML_QuickForm2_Renderer::factory('default')
     ->setTemplateForId('submit', '<div class="element">{element} or <a href="/">Cancel</a></div>');
 
 $form->render($renderer);
+$mainTextHTML .= "<h3>Formulär för att skapa ett nytt album eller editera ett 
+    gammalt.</h3><br />\r\n" . $renderer;
+
+/*
+ * Add all thumbs in the album, if there are any, with possibility to 
+ * chose signature picture.
+ */
+$query = "
+    SELECT idPicture FROM {$tablePicture} 
+    WHERE picture_idAlbum = {$idAlbum};
+";
+
+if ($result = $dbAccess->SingleQuery($query)) {
+    $mainTextHTML .= "<h3>Välj signaturbild för albumet</h3>";
+    while($row = $result->fetch_object()) {
+        $mainTextHTML .= "<a href='?p=sign_pict&amp;album=".$idAlbum.
+                "&amp;pict=".$row->idPicture."'>
+            <img src='".WS_PICTUREARCHIVE.PA_THUMBPREFIX.$row->idPicture.".jpg' />
+            </a>";
+    }
+    $result->close();
+}
 
 
 /*
@@ -206,12 +228,6 @@ $form->render($renderer);
  */
 $page         = new CHTMLPage(); 
 $pageTitle    = "Editera album";
-$mainTextHTML .= <<<HTMLCode
-<p>Formulär för att skapa ett nytt album eller editera ett gammalt.</p>
-
-HTMLCode;
-
-$mainTextHTML .= $renderer;
 
 require(TP_PAGES.'rightColumn.php'); 
 $page->printPage($pageTitle, $mainTextHTML, "", $rightColumnHTML);

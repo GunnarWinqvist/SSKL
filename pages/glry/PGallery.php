@@ -36,18 +36,28 @@ $result=$dbAccess->SingleQuery($query);
 $mainTextHTML = "";
 
 if ($result) {
+    date_default_timezone_set(WS_TIMEZONE);
     while($row = $result->fetch_object()) {
         // For every row do.
-        date_default_timezone_set(WS_TIMEZONE);
+        if ($row->signaturePictId) {
+            // If there is a signature picture chosen.
+            $thumb = WS_PICTUREARCHIVE . PA_THUMBPREFIX . $row->signaturePictId
+                . ".jpg";
+            $mainTextHTML .= <<<HTMLCode
+<a title='{$row->nameAlbum}' 
+    href='?p=show_alb&amp;id={$row->idAlbum}'>
+<img class='floatLeft' alt='thumb' src='{$thumb}' />
+</a>
+HTMLCode;
+        }
+        
         $fTimeEdited = date("Y-m-d G:i", $row->timeEditedAlbum);
         $mainTextHTML .= <<<HTMLCode
 <h2><a class='noDeco' title='{$row->nameAlbum}' 
     href='?p=show_alb&amp;id={$row->idAlbum}'>{$row->nameAlbum}</a></h2>
 <p>{$row->descriptionAlbum}</p>
 <p class='time'>Senast ändrat {$fTimeEdited}</p>
-
 HTMLCode;
-
     
         // Lägg till knappar om det är ägaren som är inlogad.
         $idSession = isset($_SESSION['idUser']) ? $_SESSION['idUser'] : NULL;
