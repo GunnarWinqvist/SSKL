@@ -18,21 +18,33 @@
 if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 $intFilter = new CAccessControl();
 $intFilter->UserIsSignedInOrRedirect();
-$intFilter->UserIsAuthorisedOrDie('fnk'); 
+// $intFilter->UserIsAuthorisedOrDie('fnk'); 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Input till sidan.
-//
+/*
+ * Tag hand om inparametrar till sidan.
+ */
+// Anropas sidan från högerkolumnen så ligger listnumret i GET.
+$lista = isset($_GET['lista']) ? $_GET['lista'] : NULL;
+$redirect = "main";
 
-$lista    = isset($_POST['lista'])    ? $_POST['lista']     : NULL;
+// Anropas sidan från list så ligger listnumret i POST.
+if (!$lista) {
+    $lista = isset($_POST['lista']) ? $_POST['lista'] : NULL;
+    $redirect = "lists";
+}
 
 if ($debugEnable) $debug .= "Lista: ".$lista."<br /> \n";
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Definiera query utifrån vilken typ av lista man vill ha.
+// Om man inte är adm eller fnk så får man bara se klasslistan.
+if (!$_SESSION['authorityUser'] == "adm" AND !$_SESSION['authorityUser'] == "fnk")
+    $lista = 4;
 
-$dbAccess          = new CdbAccess();
+
+/*
+ * Definiera query utifrån vilken typ av lista man vill ha.
+ */
+$dbAccess               = new CdbAccess();
 $tablePerson            = DB_PREFIX . 'Person';
 $tableBostad            = DB_PREFIX . 'Bostad';
 $tableFunktionar        = DB_PREFIX . 'Funktionar';
@@ -41,6 +53,9 @@ $tableMalsman           = DB_PREFIX . 'Malsman';
 $tableRelation          = DB_PREFIX . 'Relation';
 $viewMalsman            = DB_PREFIX . 'ListaMalsman';
 
+/*
+ * Skapa listan från databasen och lägg i mainTextHTML.
+ */
 switch($lista) {
 
     case '1': //Funktionärer telefon och adress.
@@ -452,7 +467,7 @@ HTMLCode;
 // Lägg till knappar för utskrift och close.
 $mainTextHTML .= <<<HTMLCode
 <a href='javascript:window.print()'>Skriv ut</a>
-<a href='?p=lists'>Tillbaka</a>
+<a href='?p={$redirect}'>Tillbaka</a>
 HTMLCode;
 
 

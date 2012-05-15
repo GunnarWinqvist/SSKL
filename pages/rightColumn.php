@@ -21,6 +21,8 @@ if (isset($_SESSION['idUser'])) {
 <a class='button' href='?p=show_usr&amp;id={$_SESSION['idUser']}' onclick="this.blur();"><span>Personuppgifter</span></a></div>
 <div class='clear_button'>
 <a class='button' href='?p=glry' onclick="this.blur();"><span>Fotogalleri</span></a></div>
+<div class='clear_button'>
+<a class='button' href='?p=lists_ex&amp;lista=4' onclick="this.blur();"><span>Klasslista</span></a></div>
 
 HTMLCode;
 
