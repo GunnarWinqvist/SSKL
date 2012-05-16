@@ -30,7 +30,7 @@ $tablePicture           = DB_PREFIX . 'Picture';
 /*
  * Search the database and list the result.
  */
-$query = "SELECT * FROM {$tableAlbum} ORDER BY timeEditedAlbum;";
+$query = "SELECT * FROM {$tableAlbum} ORDER BY timeEditedAlbum DESC;";
 $result=$dbAccess->SingleQuery($query);
 
 $mainTextHTML = "";

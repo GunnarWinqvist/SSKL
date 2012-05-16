@@ -48,8 +48,9 @@ if (isset($_POST['submitBtn'])){
     $error = "";
 
     // Prepare the database.
-    $dbAccess           = new CdbAccess();
-    $tablePicture       = DB_PREFIX . 'Picture';
+    $dbAccess       = new CdbAccess();
+    $tablePicture   = DB_PREFIX . 'Picture';
+    $tableAlbum     = DB_PREFIX . 'Album';
 
     // Get form values.
     $namePicture = $dbAccess->WashParameter(strip_tags($_POST['mytitle']));
@@ -57,17 +58,17 @@ if (isset($_POST['submitBtn'])){
         strip_tags($_POST['mydesc']));
 
     // Register picture in DB and store the information.
-    $query = <<<QUERY
-INSERT INTO {$tablePicture} (
-    picture_idAlbum, 
-    namePicture, 
-    descriptionPicture)
-VALUES (
-    '{$idAlbum}', 
-    '{$namePicture}',
-    '{$descriptionPicture}'
-    );
-QUERY;
+    $query = "
+        INSERT INTO {$tablePicture} (
+            picture_idAlbum, 
+            namePicture, 
+            descriptionPicture)
+        VALUES (
+            '{$idAlbum}', 
+            '{$namePicture}',
+            '{$descriptionPicture}'
+        );
+    ";
     $dbAccess->SingleQuery($query);
 
     // Get the picture id.
@@ -109,9 +110,17 @@ QUERY;
         $maxPhoto->resizeImage($target_path, $dest,
             PA_THUMBWIDTH, PA_THUMBHEIGHT, PA_IMAGEQUALITYTHUMB);
         $msg = "Din bild laddades upp! Vill du ladda upp en till?";
-    }
-
-    if (!$result) {
+        
+        // Update time edited for the album.
+        $timeEditedAlbum = time();
+        $query = "
+            UPDATE {$tableAlbum} SET 
+                timeEditedAlbum  = '{$timeEditedAlbum}'
+            WHERE idAlbum = '{$idAlbum}';
+        ";
+        $dbAccess->SingleQuery($query);
+        
+    } else {
         // If something went wrong, remove the picture id again.
         $query = "
             DELETE FROM {$tablePicture} 

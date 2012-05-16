@@ -42,9 +42,12 @@ if ($debugEnable) $debug.="idAlbum=".$idAlbum." idPicture=".$idPicture.
 /*
  * Update the DB.
  */
+$timeEditedAlbum = time();
+
 $query = "
-    UPDATE {$tableAlbum}
-    SET signaturePictId = '{$idPicture}'
+    UPDATE {$tableAlbum} SET 
+        signaturePictId = '{$idPicture}',
+        timeEditedAlbum  = '{$timeEditedAlbum}'
     WHERE idAlbum = '{$idAlbum}';
 ";
 $dbAccess->SingleQuery($query);
