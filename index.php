@@ -13,7 +13,7 @@
  * If the code is running on a lab environment set $labEnvironment = TRUE.
  * If the code is running on a web server environment set $labEnvironment = FALSE.
  */
-$labEnvironment = TRUE;
+$labEnvironment = FALSE;
 if ($labEnvironment)
     require_once('config_lab.php');
 else

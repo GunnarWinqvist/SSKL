@@ -21,7 +21,7 @@ $intFilter->UserIsSignedInOrRedirect();
 if ($debugEnable) $debug .= "This is a template page.<br />\r\n";
 
 /*
- * Define everything that shall be on the page, generate the left column
+ * Define everything that shall be on the page, generate the right column
  * and then display the page.
  */
 $page         = new CHTMLPage(); 

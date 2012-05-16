@@ -128,7 +128,7 @@ if ($form->validate()) {
         strip_tags($formValues['description']));
     $presentTime = time();
     
-    if ($idAlbum) { 
+    if ($idAlbum) {
         // If $idAlbum already exists, update the DB.
         $timeEditedAlbum = $presentTime;
         $query = "
@@ -138,8 +138,9 @@ if ($form->validate()) {
                 timeEditedAlbum  = '{$timeEditedAlbum}'
                 WHERE idAlbum = '{$idAlbum}';
         ";
+        $dbAccess->SingleQuery($query);
 
-    } else { 
+    } else {
         // Otherwise a new album is added to the DB.
         $album_idUser     = $_SESSION['idUser'];
         $timeCreatedAlbum = $presentTime;
@@ -159,16 +160,12 @@ if ($form->validate()) {
                 '{$timeEditedAlbum}'
                 );
         ";
-    }
-    $dbAccess->SingleQuery($query);
-
-    if (!$idAlbum) {
-        // If $idAlbum doesn't exist, it's a new album. Get the id.
+        $dbAccess->SingleQuery($query);
         $idAlbum = $dbAccess->LastId();
+        if ($debugEnable) $debug .= "idAlbum: " . $idAlbum . "<br /> \r\n";
     }
-    if ($debugEnable) $debug .= "idAlbum: " . $idAlbum . "<br /> \r\n";
 
-    
+
     // Jump to next page if not in debug.
     if ($debugEnable) {
         $form->removeChild($buttons);   // Remove buttons.
@@ -210,7 +207,7 @@ $query = "
     WHERE picture_idAlbum = {$idAlbum};
 ";
 
-if ($result = $dbAccess->SingleQuery($query)) {
+if ($idAlbum and $result = $dbAccess->SingleQuery($query)) {
     $mainTextHTML .= "<h3>Välj signaturbild för albumet</h3>";
     while($row = $result->fetch_object()) {
         $mainTextHTML .= "<a href='?p=sign_pict&amp;album=".$idAlbum.

@@ -74,12 +74,11 @@ $query = "
 SELECT * FROM (
     ({$tablePerson} JOIN {$tableFunktionar} ON funktionar_idPerson = idPerson)
                     JOIN {$tableBostad}     ON person_idBostad     = idBostad)
-    WHERE funktionFunktionar = 'Ordförande';
+    WHERE funktionFunktionar LIKE '%Ordförande%';
 ";
-$result=$dbAccess->SingleQuery($query);
-$row = $result->fetch_object();
-
-$mainTextHTML .= <<<HTMLCode
+if ($result=$dbAccess->SingleQuery($query)) {
+    $row = $result->fetch_object();
+    $mainTextHTML .= <<<HTMLCode
 <p>Eller snigelpost till:</p>
 <p>Svenska Skolföreningen i Kuala Lumpur<br />
 c/o {$row->fornamnPerson} {$row->efternamnPerson}<br />
@@ -89,6 +88,9 @@ c/o {$row->fornamnPerson} {$row->efternamnPerson}<br />
 MALAYSIA</p>
 
 HTMLCode;
+    $result->close();
+}
+
 
 /*
  * Define everything that shall be on the page, generate the left column
