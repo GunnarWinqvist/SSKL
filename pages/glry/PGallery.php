@@ -33,7 +33,16 @@ $tablePicture           = DB_PREFIX . 'Picture';
 $query = "SELECT * FROM {$tableAlbum} ORDER BY timeEditedAlbum DESC;";
 $result=$dbAccess->SingleQuery($query);
 
-$mainTextHTML = "";
+// Start with a title and a button for adding album.
+$mainTextHTML = <<<HTMLCode
+<h2>Fotogalleri</h2>
+<a title='Lägg till ett album' href='?p=edit_alb'>
+    <img src='../images/b_addBook.gif' alt='Vidare' /></a>
+<br /><br />
+<hr />
+
+HTMLCode;
+
 
 if ($result) {
     date_default_timezone_set(WS_TIMEZONE);
@@ -48,6 +57,7 @@ if ($result) {
     href='?p=show_alb&amp;id={$row->idAlbum}'>
 <img class='floatLeft' alt='thumb' src='{$thumb}' />
 </a>
+
 HTMLCode;
         }
         
@@ -57,6 +67,7 @@ HTMLCode;
     href='?p=show_alb&amp;id={$row->idAlbum}'>{$row->nameAlbum}</a></h2>
 <p>{$row->descriptionAlbum}</p>
 <p class='time'>Senast ändrat {$fTimeEdited}</p>
+
 HTMLCode;
     
         // Lägg till knappar om det är ägaren som är inlogad.
@@ -76,7 +87,7 @@ HTMLCode;
 
 HTMLCode;
         }
-        $mainTextHTML .= "<hr /><br />\r\n";
+        $mainTextHTML .= "<br /><hr />\r\n";
     }
     $result->close();
     
@@ -87,11 +98,6 @@ HTMLCode;
 
 HTMLCode;
 }
-
-// Add button for adding album.
-$mainTextHTML .= "<a title='Lägg till ett album' href='?p=edit_alb'>
-    <img src='../images/b_addBook.gif' alt='Vidare' /></a><br />\r\n";
-
 
 
 /*
