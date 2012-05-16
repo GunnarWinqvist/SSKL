@@ -32,7 +32,9 @@ while ($file = readdir($dh)) {
 closedir($dh);
 
 // Sortera listan.
-asort($fileList, SORT_STRING);
+if (PHP_VERSION >= "5.4.0") $sort_flag = SORT_NATURAL;
+else                        $sort_flag = SORT_STRING;
+asort($fileList, $sort_flag);
 
 
 /*
