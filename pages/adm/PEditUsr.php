@@ -595,13 +595,13 @@ QUERY;
             WHERE idPerson  = '{$idPerson}';";
         $dbAccess->SingleQuery($query);
         
-        // Kontrollera om ingen annan bor i den gamla bostaden. I så fall ta 
-        // bort den.
+        // Om pesonen byter bostad, kontrollera att ingen annan bor i den 
+        // gamla bostaden. I så fall ta bort den.
         $gammalBostadId = $arrayPerson[8];
         $query = "
             SELECT * FROM {$tablePerson} 
             WHERE person_idBostad = {$gammalBostadId};";
-        if (!$dbAccess->SingleQuery($query)) {
+        if ($gammalBostadId AND !$dbAccess->SingleQuery($query)) {
             $query = "
                 DELETE FROM {$tableBostad} 
                 WHERE idBostad = '{$gammalBostadId}';";
