@@ -131,6 +131,10 @@ define('WS_PICTUREARCHIVE', WS_SITELINK . 'picture_archive/');
  * Correct port for outgoing mail.
  */
 
+/**
+ * Header for outgoing mail.
+ */
+define('WS_MAILHEADERS', "");
 
 
 /******************************************************************************

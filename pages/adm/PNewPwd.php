@@ -23,7 +23,7 @@ if(!isset($nextPage)) die('Direct access to the page is not allowed.');
 require_once 'HTML/QuickForm2.php';
 require_once 'HTML/QuickForm2/Renderer.php';
 
-$formAction = WS_SITELINK . "?p=new_passw"; // Pekar tillbaka på samma sida igen.
+$formAction = WS_SITELINK . "?p=new_pwd"; // Pekar tillbaka på samma sida igen.
 $form = new HTML_QuickForm2('new_passw', 'post', 
     array('action' => $formAction), 
     array('name' => 'new_passw'));
@@ -64,7 +64,7 @@ if ($form->validate()) { // Om sidan är riktigt ifylld.
 
     //Tvätta inparametrarna.
     $formValues = $form->getValue();
-    $ePost 	    = $dbAccess->WashParameter($formValues['ePost']);
+    $eMailAdr 	    = $dbAccess->WashParameter($formValues['ePost']);
 
     // Skapa ett slumplösenord.
     $min=5; // minimum length of password
@@ -82,9 +82,9 @@ if ($form->validate()) { // Om sidan är riktigt ifylld.
     // Kolla om epostadressen finns i databasen.
     $query = "
         SELECT idPerson, accountPerson FROM {$tablePerson} 
-        WHERE ePostPerson = '{$ePost}';";
+        WHERE ePostPerson = '{$eMailAdr}';";
 
-    if ($ePost AND $result = $dbAccess->SingleQuery($query)) {
+    if ($eMailAdr AND $result = $dbAccess->SingleQuery($query)) {
         // Adressen finns i registret. Uppdatera och skicka nytt password.
         $row = $result->fetch_object();
         $result->close();
@@ -94,15 +94,21 @@ UPDATE {$tablePerson} SET
     WHERE idPerson = '{$row->idPerson}';
 QUERY;
         $dbAccess->SingleQuery($query);
-        $subject = "Nytt losenord";
-        $text = <<<Text
-Din anvandarinformation till Svenska skolforeningens hemsida.
-Anvandarnamn: {$row->accountPerson}
-Losenord: {$pwd}
+        
+        // Send mail
+        $headers =  WS_MAILHEADERS;
+        $subject = "Svenska skolföreningen";
+        $text = 
+            "Din användarinformation till Svenska skolföreningens hemsida."."\r\n".
+            "\r\n".
+            "Användarnamn: ".$row->accountPerson."\r\n".
+            "Lösenord: ".$pwd."\r\n".
+            "\r\n".
+            "Du kan själv logga in och ändra ditt lösenord.";
+        mail( $eMailAdr, $subject, $text, $headers);
+        if ($debugEnable) $debug.="Mail to: ".$eMailAdr." Subj: ".$subject
+            ." Headers: ".$headers."<br /> \n";
 
-Du kan sjalv logga in pa sidan och andra ditt losenord.
-Text;
-        mail( $ePost, $subject, $text);
         $mainTextHTML .= "<p>Ett nytt lösenord har nu skickats till den 
             angivna epostadressen.</p>  \n";
         $form->removeChild($buttons);   // Tag bort knapparna.

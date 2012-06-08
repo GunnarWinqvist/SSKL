@@ -132,6 +132,17 @@ ini_set( "SMTP", "mailout.one.com" );
  */
 ini_set( "SMTP_port", "21" );
 
+/**
+ * Header for outgoing mail.
+ */
+define('WS_MAILHEADERS',
+    "From: registrering@svenskaskolankualalumpur.com"."\r\n".
+    "Reply-To: registrering@svenskaskolankualalumpur.com"."\r\n".
+    "Content-type: text/plain; charset=iso-8859-1"."\r\n".
+    "MIME-Version: 1.0"."\r\n".
+    "Return-Path: <registrering@svenskaskolankualalumpur.com>"
+);
+
 
 /******************************************************************************
  * Define the header menu.

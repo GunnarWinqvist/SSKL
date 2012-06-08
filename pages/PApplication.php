@@ -176,11 +176,7 @@ if ($form->validate()) {
         Skolföreningen. Tack för din anmälan!</h2>";
     $eMailAdr = "registrering@svenskaskolankualalumpur.com";
     $subject = "Ny anmälan till SSKL";
-    $headers =  "From: registrering@svenskaskolankualalumpur.com"."\r\n".
-                "Reply-To: registrering@svenskaskolankualalumpur.com"."\r\n".
-                "Content-type: text/html; charset=iso-8859-1"."\r\n".
-                "MIME-Version: 1.0"."\r\n".
-                "Return-Path: <registrering@svenskaskolankualalumpur.com>";
+    $headers = WS_MAILHEADERS;
     $text = "Ny anmälan till Svenska Skolföreningen i Kuala Lumpur. \n";
     foreach ($form->getValue() as $parameter => $value)
         $text .= $parameter . "\t" . $value . "\n";

@@ -239,24 +239,21 @@ QUERY;
             }
         }
         if ($eMailAdr) { // Om vi har hittat en e-postadress.
-            $headers =  "From: registrering@svenskaskolankualalumpur.com"."\r\n".
-                        "Reply-To: registrering@svenskaskolankualalumpur.com"."\r\n".
-                        "Content-type: text/html; charset=iso-8859-1"."\r\n".
-                        "MIME-Version: 1.0"."\r\n".
-                        "Return-Path: <registrering@svenskaskolankualalumpur.com>";
+        
+            // Send mail
+            $headers =  WS_MAILHEADERS;
             $subject = "Svenska skolföreningen";
-            $text = <<<Text
-Din användarinformation till Svenska skolföreningens hemsida.
-
-Användarnamn: {$accountPerson}
-Lösenord: {$passwordPerson}
-
-Du kan själv logga in och ändra ditt lösenord.
-
-Text;
+            $text = 
+                "Din användarinformation till Svenska skolföreningens hemsida.\r\n".
+                "\r\n".
+                "Användarnamn: ".$accountPerson."\r\n".
+                "Lösenord: ".$passwordPerson."\r\n".
+                "\r\n".
+                "Du kan själv logga in och ändra ditt lösenord.";
             mail( $eMailAdr, $subject, $text, $headers);
             if ($debugEnable) $debug.="Mail to: ".$eMailAdr." Subj: ".$subject
                 ." Headers: ".$headers."<br /> \n";
+                
         } else { // Om vi inte har hittat någon adress.
             $_SESSION['errorMessage'] = 
                 "Det finns ingen mejladress att skicka lösenordet till i 
